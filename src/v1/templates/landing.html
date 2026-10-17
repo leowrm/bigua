@@ -1,0 +1,886 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ONG Biguá — informação institucional, transparência e canais de contato.">
+  <meta name="theme-color" content="#10251d">
+  <title>ONG Biguá | Cuidar, transformar, participar</title>
+  <style>
+    :root {
+      --ink: #10243d;
+      --ink-2: #193a5a;
+      --yellow: #f5bd24;
+      --orange: #e87825;
+      --cream: #f7f4ed;
+      --muted: #5d6872;
+      --line: #e1e4df;
+      --white: #fff
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.55
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 40px));
+      margin: auto
+    }
+
+    .top {
+      background: var(--ink);
+      color: var(--white);
+      padding: 14px 0
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: .02em
+    }
+
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #fff
+    }
+
+    .nav a {
+      color: #edf2f7;
+      text-decoration: none;
+      font-size: 14px;
+      margin-left: 22px
+    }
+
+    .nav a:hover {
+      color: var(--yellow)
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--ink);
+      color: var(--white);
+      padding: 86px 0 110px
+    }
+
+    .hero:after {
+      content: "";
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border-radius: 50%;
+      right: -180px;
+      top: -240px;
+      background: radial-gradient(circle, var(--yellow) 0, rgba(245, 189, 36, .2) 28%, transparent 68%);
+      opacity: .8
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 70px;
+      align-items: center
+    }
+
+    .eyebrow {
+      color: var(--yellow);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 6vw, 76px);
+      line-height: 1.03;
+      letter-spacing: -.055em;
+      margin: 18px 0 22px;
+      max-width: 680px
+    }
+
+    .hero p {
+      font-size: 19px;
+      color: #dce6ef;
+      max-width: 580px
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 30px
+    }
+
+    .btn {
+      display: inline-block;
+      border-radius: 8px;
+      padding: 13px 19px;
+      text-decoration: none;
+      font-weight: 750;
+      border: 1px solid transparent
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: #fff
+    }
+
+    .btn-primary:hover {
+      background: #f18b3e
+    }
+
+    .btn-light {
+      background: transparent;
+      border-color: #9db2c7;
+      color: #fff
+    }
+
+    .carousel {
+      position: relative;
+      background: #fff;
+      border-radius: 22px;
+      padding: 10px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .2)
+    }
+
+    .carousel-viewport {
+      position: relative;
+      overflow: hidden;
+      border-radius: 15px;
+      aspect-ratio: 4/3
+    }
+
+    .carousel-slide {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: relative
+    }
+
+    .carousel-slide.active {
+      display: block
+    }
+
+    .carousel-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .carousel-caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 42px 22px 20px;
+      color: #fff;
+      background: linear-gradient(transparent, rgba(16, 36, 61, .9));
+      font-weight: 750
+    }
+
+    .carousel-btn {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      background: rgba(255, 255, 255, .9);
+      color: var(--ink);
+      font-size: 24px;
+      cursor: pointer
+    }
+
+    .carousel-btn.prev {
+      left: 18px
+    }
+
+    .carousel-btn.next {
+      right: 18px
+    }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      padding: 12px 0 2px
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border: 0;
+      border-radius: 50%;
+      background: #c5cbd0;
+      cursor: pointer;
+      padding: 0
+    }
+
+    .carousel-dot.active {
+      background: var(--orange);
+      transform: scale(1.25)
+    }
+
+    .photo-story {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 52px;
+      align-items: center;
+      margin-top: 24px
+    }
+
+    .photo-story.reverse .story-copy {
+      order: 2
+    }
+
+    .story-image {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      border-radius: 18px;
+      display: block
+    }
+
+    .story-copy h3 {
+      font-size: clamp(27px, 3vw, 40px);
+      line-height: 1.1;
+      margin: 12px 0
+    }
+
+    .story-copy p {
+      font-size: 17px
+    }
+
+    .donation {
+      background: var(--orange);
+      color: #fff;
+      border-radius: 22px;
+      padding: 42px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 30px;
+      align-items: center
+    }
+
+    .donation h2 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.05
+    }
+
+    .donation p {
+      color: #fff2e9;
+      max-width: 650px
+    }
+
+    .pix-box {
+      background: #fff;
+      color: var(--ink);
+      padding: 18px;
+      border-radius: 12px;
+      min-width: 250px
+    }
+
+    .pix-box small {
+      display: block;
+      color: var(--muted);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em
+    }
+
+    .pix-box strong {
+      display: block;
+      margin-top: 5px;
+      word-break: break-word
+    }
+
+    .section {
+      padding: 78px 0
+    }
+
+    .section.light {
+      background: #fff
+    }
+
+    .section-head {
+      max-width: 670px;
+      margin-bottom: 32px
+    }
+
+    .section h2 {
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.1;
+      letter-spacing: -.04em;
+      margin: 12px 0
+    }
+
+    .section p {
+      color: var(--muted)
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px
+    }
+
+    .card .icon {
+      font-size: 28px
+    }
+
+    .card h3 {
+      margin: 15px 0 7px;
+      font-size: 19px
+    }
+
+    .contact {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start
+    }
+
+    .contact-box {
+      background: var(--ink);
+      color: #fff;
+      border-radius: 18px;
+      padding: 28px
+    }
+
+    .contact-box p {
+      color: #dce6ef
+    }
+
+    .contact-box a {
+      color: var(--yellow)
+    }
+
+    .detail {
+      display: grid;
+      gap: 15px
+    }
+
+    .detail-row {
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .detail-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      font-weight: 800
+    }
+
+    .detail-value {
+      font-weight: 700
+    }
+
+    .notice {
+      border-left: 4px solid var(--orange);
+      background: #fff7ed;
+      padding: 15px 18px;
+      border-radius: 6px;
+      color: #754313;
+      font-size: 14px;
+      margin-top: 22px
+    }
+
+    .footer {
+      padding: 28px 0;
+      background: #0c1c2d;
+      color: #b9c8d6;
+      font-size: 13px
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap
+    }
+
+    .footer a {
+      color: var(--yellow)
+    }
+
+    @media(max-width:760px) {
+      .wrap {
+        width: min(100% - 28px, 1120px)
+      }
+
+      .nav-links {
+        display: none
+      }
+
+      .hero {
+        padding: 58px 0 76px
+      }
+
+      .hero-grid,
+      .contact,
+      .photo-story {
+        grid-template-columns: 1fr;
+        gap: 36px
+      }
+
+      .photo-story.reverse .story-copy {
+        order: 0
+      }
+
+      .cards {
+        grid-template-columns: 1fr
+      }
+
+      .donation {
+        grid-template-columns: 1fr;
+        padding: 28px
+      }
+
+      .section {
+        padding: 58px 0
+      }
+    }
+  </style>
+  <style>
+    .hero {
+      min-height: calc(100vh - 76px);
+      padding: 42px 0 64px;
+      display: flex;
+      align-items: center;
+      background-image:linear-gradient(90deg, rgba(8, 24, 42, .18), rgba(8, 24, 42, .58)),
+      url("{% static 'landing/canoagem-2-clean.png' %}");
+      background-size: cover;
+      background-position: center
+    }
+
+    .hero:after {
+      display: none
+    }
+
+    .hero-grid {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%
+    }
+
+    .hero-copy {
+      display: none
+    }
+
+    .donation-card {
+      width: min(430px, 100%);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, .3)
+    }
+
+    .donation-card-logo {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 18px;
+      background: #fff
+    }
+
+    .donation-card h1 {
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1.03;
+      letter-spacing: -.045em;
+      text-align: center;
+      margin: 0 0 12px
+    }
+
+    .donation-card p {
+      text-align: center;
+      color: var(--muted);
+      margin: 0 auto;
+      max-width: 340px
+    }
+
+    .donation-card .pix-box {
+      margin: 22px 0 0
+    }
+
+    .donation-card .btn {
+      display: block;
+      text-align: center;
+      margin-top: 16px
+    }
+
+    .gallery-section {
+      padding: 78px 0 86px;
+      background: #fff;
+      overflow: hidden
+    }
+
+    .gallery-head {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 30px
+    }
+
+    .gallery-head h2 {
+      font-size: clamp(31px, 4vw, 52px);
+      line-height: 1.05;
+      letter-spacing: -.045em;
+      margin: 10px 0
+    }
+
+    .gallery-head p {
+      color: var(--muted);
+      font-size: 17px
+    }
+
+    .wide-gallery {
+      position: relative;
+      width: 100vw;
+      margin-left: calc(50% - 50vw)
+    }
+
+    .wide-track {
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      padding: 8px max(calc((100vw - min(74vw, 920px))/2), 24px) 18px;
+      scrollbar-width: none
+    }
+
+    .wide-track::-webkit-scrollbar {
+      display: none
+    }
+
+    .wide-slide {
+      position: relative;
+      flex: 0 0 min(74vw, 920px);
+      height: min(52vw, 560px);
+      min-height: 300px;
+      scroll-snap-align: center;
+      border-radius: 20px;
+      overflow: hidden;
+      background: var(--ink);
+      box-shadow: 0 14px 36px rgba(16, 36, 61, .16)
+    }
+
+    .wide-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .wide-slide:after {
+      content: "";
+      position: absolute;
+      inset: 35% 0 0;
+      background: linear-gradient(transparent, rgba(8, 24, 42, .86))
+    }
+
+    .wide-slide figcaption {
+      position: absolute;
+      z-index: 1;
+      left: 28px;
+      right: 28px;
+      bottom: 24px;
+      color: #fff;
+      font-size: clamp(18px, 2.2vw, 27px);
+      font-weight: 800
+    }
+
+    .wide-arrow {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .94);
+      color: var(--ink);
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, .14)
+    }
+
+    .wide-arrow.prev {
+      left: 24px
+    }
+
+    .wide-arrow.next {
+      right: 24px
+    }
+
+    .wide-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px
+    }
+
+    .wide-dot {
+      width: 8px;
+      height: 8px;
+      border: 0;
+      border-radius: 50%;
+      background: #c5cbd0;
+      padding: 0;
+      cursor: pointer
+    }
+
+    .wide-dot.active {
+      background: var(--orange);
+      transform: scale(1.3)
+    }
+
+    @media(max-width:760px) {
+      .hero {
+        min-height: calc(100vh - 76px);
+        background-position: 58% center
+      }
+
+      .hero-grid {
+        justify-content: center
+      }
+
+      .donation-card {
+        padding: 24px
+      }
+
+      .wide-slide {
+        flex-basis: 86vw;
+        height: 65vw;
+        min-height: 270px
+      }
+
+      .wide-arrow {
+        width: 36px;
+        height: 36px;
+        font-size: 22px
+      }
+
+      .wide-arrow.prev {
+        left: 12px
+      }
+
+      .wide-arrow.next {
+        right: 12px
+      }
+
+      .gallery-section {
+        padding: 56px 0 64px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="top">
+    <div class="wrap nav"><a class="brand" href="/"><img class="brand-logo" src="{% static 'landing/logo-bigua.png' %}"
+          alt="Logo da ONG Biguá"><span>ONG Biguá</span></a>
+      <nav class="nav-links"><a href="#sobre">Sobre nós</a><a href="#galeria">Galeria</a><a
+          href="#atuacao">Atuação</a><a href="#doe">Apoie</a><a href="#contato">Contato</a></nav>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <aside class="donation-card"><img class="donation-card-logo" src="{% static 'landing/logo-bigua.png' %}"
+            alt="Logo da ONG Biguá">
+          <div class="eyebrow" style="text-align:center;color:var(--orange)">Associação de Canoagem e Preservação
+            Ambiental</div>
+          <h1>Remar juntos por um futuro melhor.</h1>
+          <p>Seu apoio ajuda a manter a canoagem, a educação ambiental e as ações da Biguá em movimento.</p>
+          <div class="pix-box"><small>Doe por Pix</small><strong>06.003.358/0001-54</strong></div><a
+            class="btn btn-primary" href="#doe">APOIE A BIGUÁ</a>
+        </aside>
+      </div>
+    </section>
+    <section class="gallery-section" id="galeria">
+      <div class="gallery-head">
+        <div class="eyebrow">A Biguá em ação</div>
+        <h2>O impacto acontece quando a comunidade rema junto.</h2>
+        <p>Deslize pelas imagens para conhecer um pouco do nosso trabalho.</p>
+      </div>
+      <div class="wide-gallery" aria-label="Galeria de fotos da ONG Biguá"><button class="wide-arrow prev" type="button"
+          aria-label="Imagem anterior">‹</button>
+        <div class="wide-track">
+          <figure class="wide-slide"><img src="{% static 'landing/canoagem-1.png' %}" alt="Grupo de canoagem no rio">
+            <figcaption>Canoagem e conexão com a natureza</figcaption>
+          </figure>
+          <figure class="wide-slide"><img src="{% static 'landing/equipe-bigua.png' %}"
+              alt="Equipe da Associação Biguá">
+            <figcaption>Uma equipe que constrói junto</figcaption>
+          </figure>
+          <figure class="wide-slide"><img src="{% static 'landing/canoagem-2-clean.png' %}" alt="Atividade de canoagem">
+            <figcaption>Esporte, território e preservação</figcaption>
+          </figure>
+          <figure class="wide-slide"><img src="{% static 'landing/projeto-comunidade.png' %}"
+              alt="Projeto comunitário em atividade">
+            <figcaption>Educação ambiental na comunidade</figcaption>
+          </figure>
+        </div><button class="wide-arrow next" type="button" aria-label="Próxima imagem">›</button>
+        <div class="wide-dots"><button class="wide-dot active" type="button" aria-label="Imagem 1"></button><button
+            class="wide-dot" type="button" aria-label="Imagem 2"></button><button class="wide-dot" type="button"
+            aria-label="Imagem 3"></button><button class="wide-dot" type="button" aria-label="Imagem 4"></button></div>
+      </div>
+    </section>
+    <section class="section light" id="impacto">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">O que nos move</div>
+          <h2>O esporte abre caminhos. O cuidado preserva o território.</h2>
+          <p>Na água e fora dela, a Biguá cria oportunidades de participação, aprendizado e cuidado com o ambiente.</p>
+        </div>
+        <article class="photo-story"><img class="story-image" src="{% static 'landing/equipe-bigua.png' %}"
+            alt="Equipe da Biguá reunida com caiaques">
+          <div class="story-copy">
+            <div class="eyebrow">Ação coletiva</div>
+            <h3>Uma comunidade que rema na mesma direção</h3>
+            <p>As atividades da associação aproximam crianças, jovens, famílias e parceiros em torno da canoagem e da
+              preservação ambiental.</p>
+          </div>
+        </article>
+        <article class="photo-story reverse"><img class="story-image"
+            src="{% static 'landing/projeto-comunidade.png' %}" alt="Participantes em ação de educação ambiental">
+          <div class="story-copy">
+            <div class="eyebrow">Educação ambiental</div>
+            <h3>Conhecimento que vira cuidado</h3>
+            <p>Projetos, encontros e ações no território ajudam a transformar consciência ambiental em atitudes
+              concretas.</p>
+          </div>
+        </article>
+        <div class="donation" id="doe">
+          <div>
+            <div class="eyebrow" style="color:#fff2a8">Apoie a Biguá</div>
+            <h2>Sua contribuição mantém essa corrente em movimento.</h2>
+            <p>Escolha uma forma de apoiar a associação. Para doações, use a chave Pix oficial da Biguá ou fale com a
+              nossa equipe.</p><a class="btn btn-light" href="#contato">Quero apoiar</a>
+          </div>
+          <div class="pix-box"><small>Chave Pix</small><strong>06.003.358/0001-54</strong></div>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="sobre">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Sobre a Biguá</div>
+          <h2>Uma organização feita de pessoas.</h2>
+          <p>A Biguá Associação de Canoagem e Preservação atua desde 2003 com esporte, educação ambiental e mobilização
+            comunitária. Conheça nosso trabalho e participe dessa rede.</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <div class="icon">🚣</div>
+            <h3>Canoagem</h3>
+            <p>O esporte como ferramenta de desenvolvimento, convivência e conexão com o território.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🌊</div>
+            <h3>Preservação</h3>
+            <p>Cuidado com os rios, praias e ambientes que fazem parte da nossa comunidade.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🤝</div>
+            <h3>Comunidade</h3>
+            <p>Projetos que aproximam diferentes gerações por meio da participação e da educação.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section class="section light" id="atuacao">
+      <div class="wrap contact">
+        <div>
+          <div class="eyebrow">Atuação</div>
+          <h2>Como você pode participar</h2>
+          <p>Conheça as ações da ONG, acompanhe as novidades e entre em contato para saber como apoiar, colaborar ou
+            participar das nossas iniciativas.</p>
+          <div class="actions"><a class="btn btn-primary" href="#contato">Quero participar</a></div>
+        </div>
+        <div class="detail">
+          <div class="detail-row">
+            <div class="detail-label">Organização</div>
+            <div class="detail-value">ONG Biguá</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">CNPJ</div>
+            <div class="detail-value">06.003.358/0001-54</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Endereço</div>
+            <div class="detail-value">Rua Americo da Silva, 475 - Tres Vendas, Barra do Ribeiro</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="contato">
+      <div class="wrap contact">
+        <div class="contact-box">
+          <div class="eyebrow">Canais oficiais</div>
+          <h2>Fale com a ONG Biguá</h2>
+          <p>Use os canais abaixo para tirar dúvidas, conhecer nossas ações ou conversar com a equipe.</p>
+          <p><strong>WhatsApp:</strong> +55 (51) 99829-2571</p>
+          <p><strong>Facebook:</strong> <a href="https://www.facebook.com/ongbigua" target="_blank"
+              rel="noopener">facebook.com/ongbigua</a></p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="wrap footer-grid"><span>© {% now "Y" %} ONG Biguá. Todos os direitos reservados.</span><span><a
+          href="#contato">Contato</a> · <a href="/v1/login/">Área administrativa</a></span></div>
+  </footer>
+  <script>
+    (() => { const track = document.querySelector('.wide-track'); const slides = [...document.querySelectorAll('.wide-slide')]; const dots = [...document.querySelectorAll('.wide-dot')]; const move = (index) => { const target = (index + slides.length) % slides.length; slides[target].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); dots.forEach((dot, i) => dot.classList.toggle('active', i === target)); }; document.querySelector('.wide-arrow.prev').addEventListener('click', () => move(Math.max(0, slides.findIndex(slide => slide.getBoundingClientRect().left >= track.getBoundingClientRect().left) - 1))); document.querySelector('.wide-arrow.next').addEventListener('click', () => move(Math.min(slides.length - 1, slides.findIndex(slide => slide.getBoundingClientRect().right > track.getBoundingClientRect().right) + 1))); dots.forEach((dot, i) => dot.addEventListener('click', () => move(i))); let timer = setInterval(() => { const active = slides.findIndex(slide => Math.abs(slide.getBoundingClientRect().left - (window.innerWidth - slide.offsetWidth) / 2) < 30); move(active + 1); }, 6500); track.addEventListener('mouseenter', () => clearInterval(timer)); })();
+  </script>
+</body>
+
+</html>

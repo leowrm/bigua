@@ -1,0 +1,41 @@
+{% extends "app.html" %}
+
+{% block content %}
+
+<div class="screen active" id="screen-alunos">
+    <div class="page-header">
+        <div class="page-title">Alunos</div>
+        <div class="page-sub" id="count-alunos">{{alunos|length}} alunos cadastrados</div>
+    </div>
+    <form class="search-row" action="{% url 'alunos-filtro' %}" method="post"> {% csrf_token %}
+        <input class="form-input search-input" placeholder="Buscar aluno por nome ou CPF..." name="busca" />
+        <input class="btn btn-ghost" type="submit" value="Buscar" />
+        <a class="btn btn-primary" href="{% url 'novo-aluno' %}">Novo aluno</a>
+    </form>
+    <div class="card">
+        <table>
+            <tr><th>Nome</th><th>Nascimento</th><th>Escola</th><th>Série</th><th>Responsável legal</th><th>Projetos</th><th>Detalhes</th></tr>
+            {%for aluno in alunos %}
+            <tbody id="tbody-alunos">
+            <tr>
+                <td>{{ aluno.nome }}</td>
+                <td class="td-mono">{{ aluno.nascimento }}</td>
+                <td>{{ aluno.escola }}</td>
+                <td>{{ aluno.serie }}</td>
+                <td>{{ aluno.responsabilidadelegal.id_responsavel.nome }}</td>
+                <td>
+                {% for vinculo in aluno.vinculoalunoprojeto_set.all %}
+                    <span class="dep-tag">{{ vinculo.id_projeto.nome_projeto }}</span>
+                {% empty %}
+                    Nenhum projeto vinculado
+                {% endfor %}
+                </td>
+                <td><a class="btn btn-link" href="{% url 'editar-aluno' aluno.id_aluno %}">Editar</a></td>
+            </tr>
+            </tbody>
+            {%endfor%}
+        </table>
+    </div>
+</div>
+
+{% endblock %}

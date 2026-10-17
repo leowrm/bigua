@@ -1,0 +1,38 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-cadastro-step2-dep">
+    <div class="page-header">
+        <div class="page-title">Editar responsavel financeiro:</div>
+    </div>
+    <div class="card" style="max-width:640px;">
+        <div class="card-title" style="margin-bottom:16px;">Responsabilidade financeira</div>
+        <form class="form-group" action="{% url 'buscar-responsavel-edicao' id_associado=associado.id_associado %}" method="post"> {% csrf_token %}
+            <label class="form-label">Busque o responsável financeiro:</label>
+            <div style="display:flex;gap:8px;margin-top:6px;">
+                <input class="form-input" placeholder="Digite o CPF do novo responsável financeiro" style="flex:1;" name="cpf"/> 
+                <input type="submit" class="btn btn-ghost" value="Buscar" />
+            </div>
+        </form>
+        <form class="form-group" action="{% url 'vincular-responsavel-edicao' id_associado=associado.id_associado id_responsavel=responsavel.id_associado %}" method="post"> {% csrf_token %}
+            <div class="resp-card">
+                <div class="resp-name">Associado: {{ associado.nome }}</div>
+                <div class="resp-info">Responsável financeiro: {{ responsavel.nome}}</div>
+                <div class="resp-info">CPF: {{ responsavel.cpf }}</div>
+                <div class="resp-info">Telefone: {{ responsavel.telefone }}</div>
+            </div>
+            <div>
+                <label class="form-label">
+                    {% for message in messages %}
+                        <div class="alert alert-error">{{ message }}</div>
+                    {% endfor %}
+                </label>
+            </div>
+            <div class="actions" style="margin-top:16px;">
+                <input type="submit" class="btn btn-primary" value="Concluir" />
+                <a href="{% url 'editar-associado' id_associado=associado.id_associado %}" class="btn btn-ghost">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

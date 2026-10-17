@@ -1,0 +1,59 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-cadastro-step1">
+    <div class="page-header">
+        <div class="page-title">Novo Plano</div>
+        <div class="page-sub">Dados do plano</div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'novo-plano' %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:16px;">Dados do plano</div>
+        <div class="form-grid" style="margin-bottom:14px;">
+            <div class="form-group">
+                <label class="form-label">Nome do plano</label>
+                <input class="form-input" id="input-nome-plano" placeholder="Nome do plano" name="nome" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Valor</label>
+                <input class="form-input" type="number" id="input-valor-plano" placeholder="Valor do plano" name="valor" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Formas de pagamento</label>
+                <label class="checkbox plan-card">
+                    <input type="checkbox" value="True" name="Dinheiro" checked> Dinheiro
+                </label>
+                <label class="checkbox plan-card">
+                    <input type="checkbox" value="True" name="Pix" checked> Pix
+                </label>
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+                <div class="form-group">
+                    <label class="form-label">Meses cobrados antecipadamente</label>
+                    <input class="form-input" type="number" id="input-meses-antecipados" placeholder="0" name="meses_antecipados" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Regime de cobrança</label>
+                    <select class="form-input" id="input-regime-cobranca" name="regime_cobranca">
+                        <option value="mensal">Mensal</option>
+                        <option value="trimestral">Trimestral</option>
+                        <option value="semestral">Semestral</option>
+                        <option value="anual">Anual</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div>
+            <label class="form-label">
+                {% for message in messages %}
+                    <div class="alert alert-error">{{ message }}</div>
+                {% endfor %}
+            </label>
+        </div>
+        <div class="actions">
+            <input type="submit" class="btn btn-primary" value="Criar plano" />
+            <a href="{% url 'planos' %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

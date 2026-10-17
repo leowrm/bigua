@@ -1,0 +1,62 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-planos">
+    <div class="page-header">
+        <div class="page-title">Planos</div>
+        <div class="page-sub">Gerencie os planos de mensalidade</div>
+    </div>
+    <form class="search-row" action="{% url 'planos-filtro' %}" method="post"> {% csrf_token %}
+        <input class="form-input search-input" placeholder="Buscar por nome do plano..." name="busca"/>
+        <input class="btn btn-ghost" type="submit" value="Buscar" />
+        <a class="btn btn-primary" href="/v1/plano/novo">Novo plano</a>
+    </form>
+    
+    <div class="grid-3" id="grid-planos" style="margin-bottom:20px;">
+        {% for plano in planos_ativos %}
+        <div class="plan-card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                <div class="plan-name">{{ plano.nome_plano }}</div>               
+                <span class="badge b-ativo">Ativo</span>
+            </div>
+            <div class="plan-price">
+                R$ {{ plano.valor }}
+                <span>
+                    {% if plano.regime_cobranca == 'mensal' %}/Mês {% endif %}
+                    {% if plano.regime_cobranca == 'trimestral' %}/Trimestre {% endif %}
+                    {% if plano.regime_cobranca == 'semestral' %}/Semestre {% endif %}
+                    {% if plano.regime_cobranca == 'anual' %}/Ano {% endif %}
+                </span>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:14px;">
+                <a href="{% url 'editar-plano' plano.id_plano %}" class="btn btn-ghost btn-sm">
+                    Editar
+                </a>                
+            </div>
+        </div>
+        {% endfor %}
+        {% for plano in planos_inativos %}
+        <div class="plan-card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                <div class="plan-name">{{ plano.nome_plano }}</div>               
+                <span class="badge b-inativo">Inativo</span>
+            </div>
+            <div class="plan-price">
+                R$ {{ plano.valor }}
+                <span>
+                    {% if plano.regime_cobranca == 'mensal' %}/Mês {% endif %}
+                    {% if plano.regime_cobranca == 'trimestral' %}/Trimestre {% endif %}
+                    {% if plano.regime_cobranca == 'semestral' %}/Semestre {% endif %}
+                    {% if plano.regime_cobranca == 'anual' %}/Ano {% endif %}
+                </span>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:14px;">
+                <a href="{% url 'editar-plano' plano.id_plano %}" class="btn btn-ghost btn-sm">
+                    Editar
+                </a>                
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

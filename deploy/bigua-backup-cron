@@ -1,0 +1,1 @@
+30 2 * * * /opt/bigua/deploy/backup-postgres.sh >> /var/log/bigua-backup.log 2>&1

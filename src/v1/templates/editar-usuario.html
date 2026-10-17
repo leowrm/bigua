@@ -1,0 +1,82 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-admin-editar">
+    <div class="page-header">
+        <div class="page-title">Editar usuário</div>
+        <div class="page-sub">Dados do usuário</div>
+    </div>
+    <form class="card" style="max-width:640px;margin-bottom:0;" action="{% url 'editar-usuario' id_usuario=usuario.id %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:16px;">Dados do usuário</div>
+        <div class="form-grid" style="margin-bottom:14px;">
+            <div>
+                <div class="form-group">
+                    <label class="form-label">Nome completo</label>
+                    <input class="form-input" id="edit-nome" value="{{ usuario.first_name }}" name="nome"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">E-mail</label>
+                    <input class="form-input" id="edit-email" type="email" value="{{ usuario.email }}" name="email"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Função na ONG</label>
+                    <input class="form-input" id="edit-funcao" value="{{ usuario.last_name }}" name="funcao"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nova senha</label>
+                    <input class="form-input" id="edit-senha" type="password" placeholder="Deixe em branco para manter senha anterior" name="senha"/>
+                </div>
+                <div class="form-group">    
+                    <label class="form-label">Repetir senha</label>
+                    <input class="form-input" id="confirm-senha" type="password" placeholder="Repetir senha" name="confirm_senha"/>
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:0;">
+                <div class="card-title" style="margin-bottom:16px;">Seções liberadas</div>
+                <div id="edit-permissoes" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--dark3);border-radius:8px;padding:12px;">    
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);" >
+                        <input type="checkbox" value="view_associado" name="associados" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'v1.view_associado' in acessos %} checked {% endif %} />
+                        Associados
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                        <input type="checkbox" value="view_planos" name="planos" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'v1.view_planos' in acessos %} checked {% endif %} />
+                        Planos
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                        <input type="checkbox" value="view_mensalidades" name="mensalidades" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'v1.view_mensalidades' in acessos %} checked {% endif %} />
+                        Cobranças
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                        <input type="checkbox" value="view_patrimonio" name="patrimonio" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'v1.view_patrimonio' in acessos %} checked {% endif %} />
+                        Patrimonio
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                        <input type="checkbox" value="view_projeto" name="projetos" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'v1.view_projeto' in acessos %} checked {% endif %} />
+                        Projetos
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                        <input type="checkbox" value="True" name="administracao" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if usuario.is_staff %} checked {% endif %} />
+                        Administração
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                        <input type="checkbox" value="view_configuracaowhatsapp" name="whatsapp" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'whatsapp.view_configuracaowhatsapp' in acessos %} checked {% endif %} />
+                        WhatsApp
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:8px;">
+                <input class="btn btn-primary" type="submit" value="Salvar alterações" />
+                <a href="{% url 'administracao' %}" class="btn btn-ghost">Cancelar alteração</a>
+            </div>
+            <div style="margin-top:16px;margin-left:auto;">
+                <a href="{% url 'excluir-usuario' usuario.id %}" class="btn btn-danger" style="margin-left: auto;">Excluir</a>
+            </div>
+            {% for message in messages %}
+            <div class="alert alert-error">{{ message }}</div>
+            {% endfor %}
+        </div>
+    </form>
+</div>
+
+
+{% endblock content %}

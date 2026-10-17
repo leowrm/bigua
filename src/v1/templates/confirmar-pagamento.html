@@ -1,0 +1,30 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active">
+    <div class="page-header">
+        <div class="page-title">Confirmar pagamento</div>
+        <div class="page-sub">Confirme o pagamento da cobrança</div>
+    </div>
+    <div class="card" style="max-width:480px;">
+        <div class="card-title" style="margin-bottom:12px;">Tem certeza que deseja confirmar o pagamento?</div>
+        <div style="margin-bottom:16px;">
+            <div style="font-size:13px;">Associado: {{ cobranca.id_associado.nome }}</div>
+            <div style="font-size:13px;">Plano: {{ cobranca.id_planos.nome_plano }}</div>
+            <div style="font-size:13px;">Valor: {{ cobranca.valor }}</div>
+            <div style="font-size:13px;">Período de referência: {{cobranca.periodo_referencia|date:"F \d\e Y"}}</div>
+            <div style="font-size:13px;">Data de vencimento: {{ cobranca.vencimento }}</div>
+            <div style="font-size:13px;">Data de pagamento: {% now "j \d\e F \d\e Y" %}</div>           
+        </div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">
+            Esta ação não pode ser desfeita.
+        </div>
+        <div style="display:flex;gap:10px;">
+            <form method="post" action="{% url 'confirmar-pagamento' id_mensalidade=cobranca.id_mensalidade %}"> {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Confirmar pagamento</button>
+            </form>
+            <a href="{% url 'cobrancas' %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

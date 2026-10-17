@@ -1,0 +1,40 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-cadastro-step3">
+    <div class="page-header">
+        <div class="page-title">Alterar plano</div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'alterar-plano' id_associado=id_associado %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:14px;">Escolha o plano</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            {% for plano in planos %}
+            <div class="plan-card" style="padding:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <input type="radio" id="plano-{{ plano.id_plano }}" name="plano" value="{{ plano.id_plano }}"></input>
+                    <label for="plano-{{ plano.id_plano }}" class="plan-name" style="font-size:13px;margin-bottom:0;">{{ plano.nome_plano }}</label>
+                    <label for="plano-{{ plano.id_plano }}" class="td-mono" style="font-size:13px;"> Meses antecipados: {{ plano.meses_antecipados }}</label>
+                    <label for="plano-{{ plano.id_plano }}" class="td-mono" style="font-size:13px;"> Cobrança: {{ plano.regime_cobranca }}</label>
+                    <label for="plano-{{ plano.id_plano }}" style="font-size:15px;font-weight:600;color:var(--orange);">
+                        R$ {{ plano.valor }} / 
+                        {% if plano.regime_cobranca == 'mensal' %}Mês{%endif%}
+                        {% if plano.regime_cobranca == 'trimestral' %}Trimestre{%endif%}
+                        {% if plano.regime_cobranca == 'semestral' %}Semestre{%endif%}
+                        {% if plano.regime_cobranca == 'anual' %}Ano{%endif%}
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div>
+            {% for message in messages %}
+                <div class="alert alert-error">{{ message }}</div>
+            {% endfor %}
+        </div>
+        <div class="actions" style="max-width:640px;">
+            <input type="submit" class="btn btn-primary" value="Confirmar"></input>
+            <a href="{% url 'editar-associado' id_associado=id_associado %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock content %}

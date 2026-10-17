@@ -1,0 +1,58 @@
+{% extends "app.html" %}
+
+{% block content %}
+<!-- PERFIL -->
+<div class="screen active" id="screen-perfil">
+  <div class="page-header">
+    <div class="page-title">Meu perfil</div>
+    <div class="page-sub">Gerencie suas informações pessoais</div>
+  </div>
+  <div class="form-grid">
+    <!-- DADOS PESSOAIS -->
+    <form class="card" action="{% url 'usuario' %}" method="POST" style="margin-bottom:20px;"> {% csrf_token %}
+      <div class="card-title" style="margin-bottom:16px;">Dados pessoais</div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Nome completo</label>
+          <input class="form-input" id="perfil-nome" value="{{ user.first_name }}" name="first_name"/>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">E-mail</label>
+          <input class="form-input" id="perfil-email" type="email" value="{{ user.email}}" name="email"/>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Função na ONG</label>
+          <input class="form-input" id="perfil-funcao" value="{{ user.last_name }}" disabled style="opacity:0.5;cursor:not-allowed;" />
+        </div>
+        <div style="margin-top:14px;">
+          <button class="btn btn-primary">Salvar dados</button>
+        </div>
+      </form>
+
+    <!-- ALTERAR SENHA -->
+    <form class="card" action="{% url 'alterar-senha' %}" method="POST" style="margin-bottom:20px;"> {% csrf_token %}
+      <div class="card-title" style="margin-bottom:16px;">Alterar senha</div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Senha atual</label>
+          <input class="form-input" id="perfil-senha-atual" type="password" placeholder="••••••••" name="current_password" />
+        </div>
+        <div></div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Nova senha</label>
+          <input class="form-input" id="perfil-senha-nova" type="password" placeholder="Mínimo 8 caracteres" name="new_password" />
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Confirmar nova senha</label>
+          <input class="form-input" id="perfil-senha-confirm" type="password" placeholder="Repita a nova senha" name="confirm_password" />
+        </div>
+        <div style="margin-top:14px;">
+          <button class="btn btn-primary">Alterar senha</button>
+        </div>
+      </div>
+    </form>
+    {% for message in messages %}
+    <div class="card alert alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}" style="margin-top:12px;">{{ message }}</div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock content %}

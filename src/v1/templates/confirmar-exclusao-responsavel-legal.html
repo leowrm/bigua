@@ -1,0 +1,26 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active">
+    <div class="page-header">
+        <div class="page-title">Excluir responsável legal</div>
+        <div class="page-sub">Confirme a exclusão do responsável legal</div>
+    </div>
+    <div class="card" style="max-width:480px;">
+        <div class="card-title" style="margin-bottom:12px;">Tem certeza que deseja excluir?</div>
+        <div style="margin-bottom:16px;">
+            <div style="font-size:15px;font-weight:600;">{{ responsavel.nome }}</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Nome: {{ responsavel.nome }}</div>
+        </div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">
+            Esta ação não pode ser desfeita.
+        </div>
+        <div style="display:flex;gap:10px;">
+            <form method="post" action="{% url 'excluir-responsavel-legal' id_responsavel_legal=responsavel.id_responsavel %}"> {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Confirmar exclusão</button>
+            </form>
+            <a href="{% url 'editar-responsavel-legal' id_responsavel_legal=responsavel.id_responsavel %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

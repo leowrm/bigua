@@ -1,0 +1,101 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-whatsapp-historico">
+    <div class="page-header">
+        <div class="page-title">WhatsApp · Disparos</div>
+        <div class="page-sub">Lembretes de cobrança agendados, enviados e com falha</div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="info-box" style="background:var(--green-bg);color:#8CC63F;border-color:rgba(99,153,34,0.25);">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr));">
+        <div class="metric-card">
+            <div class="metric-label">Agendados</div>
+            <div class="metric-value">{{ contagens.AGENDADO }}</div>
+            <span class="metric-tag tag-amber">aguardando envio</span>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Enviados</div>
+            <div class="metric-value">{{ contagens.ENVIADO }}</div>
+            <span class="metric-tag tag-green">entregues à Meta</span>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Falharam</div>
+            <div class="metric-value">{{ contagens.FALHOU }}</div>
+            <span class="metric-tag tag-red">precisam de atenção</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Ações manuais</div>
+                <div class="card-sub">O mesmo que rodar os comandos pelo terminal, direto por aqui</div>
+            </div>
+        </div>
+        <div class="actions" style="margin-top:0;">
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="acao" value="gerar">
+                <button class="btn btn-ghost" type="submit">Gerar disparos das mensalidades pendentes</button>
+            </form>
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="acao" value="enviar">
+                <button class="btn btn-primary" type="submit">Enviar disparos agendados agora</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="search-row">
+        <form method="get" style="display:flex;gap:10px;width:100%;">
+            <select class="form-input" name="status" onchange="this.form.submit()" style="width:220px;">
+                <option value="" {% if not status_filtro %}selected{% endif %}>Todos os status</option>
+                <option value="AGENDADO" {% if status_filtro == "AGENDADO" %}selected{% endif %}>Agendado</option>
+                <option value="ENVIADO" {% if status_filtro == "ENVIADO" %}selected{% endif %}>Enviado</option>
+                <option value="FALHOU" {% if status_filtro == "FALHOU" %}selected{% endif %}>Falhou</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="card">
+        <table>
+            <tr>
+                <th>Associado</th>
+                <th>Tipo</th>
+                <th>Programado para</th>
+                <th>Enviado em</th>
+                <th>Status</th>
+            </tr>
+            {% for disparo in disparos %}
+            <tr>
+                <td>{{ disparo.associado.nome }}</td>
+                <td class="td-muted">{{ disparo.get_tipo_display }}</td>
+                <td class="td-muted">{{ disparo.data_programada|date:"d/m/Y H:i" }}</td>
+                <td class="td-muted">{{ disparo.data_envio|date:"d/m/Y H:i"|default:"—" }}</td>
+                <td>
+                    {% if disparo.status == "ENVIADO" %}
+                        <span class="badge b-pago">Enviado</span>
+                    {% elif disparo.status == "FALHOU" %}
+                        <span class="badge b-atrasado">Falhou</span>
+                    {% else %}
+                        <span class="badge b-pendente">Agendado</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="td-muted">Nenhum disparo encontrado.</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock content %}

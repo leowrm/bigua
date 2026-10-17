@@ -1,0 +1,61 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-cadastro-step3">
+    <div class="page-header">
+        <div class="page-title">Associado</div>
+        <div class="page-sub">Passo 3 de 4 — Plano</div>
+    </div>
+    <div class="steps">
+        <div class="step-item">
+            <div class="step-num done">✓</div>
+            <div class="step-label done">Dados pessoais</div></div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num done">✓</div>
+            <div class="step-label done">Responsabilidade</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num active">3</div>
+            <div class="step-label active">Plano</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num pending">4</div>
+            <div class="step-label pending">Confirmação</div>
+        </div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'vincular-plano' id_associado=id_associado %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:14px;">Escolha o plano</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            {% for plano in planos %}
+            <div class="plan-card" style="padding:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <input type="radio" id="plano-{{ plano.id_plano }}" name="plano" value="{{ plano.id_plano }}"></input>
+                    <label for="plano-{{ plano.id_plano }}" class="plan-name" style="font-size:13px;margin-bottom:0;">{{ plano.nome_plano }}</label>
+                    <label for="plano-{{ plano.id_plano }}" class="td-mono" style="font-size:13px;"> Meses antecipados: {{ plano.meses_antecipados }}</label>
+                    <label for="plano-{{ plano.id_plano }}" class="td-mono" style="font-size:13px;"> Cobrança: {{ plano.regime_cobranca }}</label>
+                    <label for="plano-{{ plano.id_plano }}" style="font-size:15px;font-weight:600;color:var(--orange);">
+                        R$ {{ plano.valor }} / 
+                        {% if plano.regime_cobranca == 'mensal' %}Mês{%endif%}
+                        {% if plano.regime_cobranca == 'trimestral' %}Trimestre{%endif%}
+                        {% if plano.regime_cobranca == 'semestral' %}Semestre{%endif%}
+                        {% if plano.regime_cobranca == 'anual' %}Ano{%endif%}
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div>
+            {% for message in messages %}
+                <div class="alert alert-error">{{ message }}</div>
+            {% endfor %}
+        </div>
+        <div class="actions" style="max-width:640px;">
+            <input type="submit" class="btn btn-primary" value="Próximo"></input>
+            <a href="{% url 'excluir-associado' id_associado=id_associado %}" class="btn btn-ghost">{% csrf_token %} Cancelar</a> 
+        </div>
+    </form>
+</div>
+{% endblock content %}

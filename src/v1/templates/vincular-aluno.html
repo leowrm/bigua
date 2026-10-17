@@ -1,0 +1,31 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-admins">
+    <div class="page-header">
+        <div class="page-title">Projeto</div>
+        <div class="page-sub">Gerencie os alunos do projeto</div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'vincular-alunos' id_projeto=projeto.id_projeto %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:16px;">Vincular os alunos ao projeto: {{projeto.nome}}</div>
+        <table>
+        <tr><th></th><th>Aluno</th><th>Escola</th><th>Série</th></tr>
+        <thead><tbody id="tbody-projetos">
+            {% for aluno in alunos %}
+                <tr>
+                    <td><input type="checkbox" name="alunos" value="{{ aluno.id_aluno }}" {% if aluno.id_aluno in alunos_selecionados %}checked{% endif %}></td>
+                    <td><div style="font-size:13px;font-weight:500;">{{ aluno.nome }}</div></td>
+                    <td><div style="font-size:13px;font-weight:500;">{{ aluno.escola }}</div></td>
+                    <td><div style="font-size:13px;font-weight:500;">{{ aluno.serie }}</div></td>
+                </tr>
+            </input>
+            {% endfor %}
+        </table>
+        <div class="actions">
+            <input type="submit" class="btn btn-primary" value="Vincular alunos" />
+            <a href="{% url 'editar-projeto' id_projeto=projeto.id_projeto %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

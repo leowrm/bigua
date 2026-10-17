@@ -1,0 +1,67 @@
+{% extends "app.html" %}
+
+{% block content %}
+<!-- PROJETOS NOVO -->
+<div class="screen active" id="screen-projetos-novo">
+    <div class="page-header">
+        <div class="page-title">Novo projeto</div>
+        <div class="page-sub">Cadastre um projeto com financiamento externo</div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'novo-projeto' %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:16px;">Dados do projeto</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="form-group">
+                <label class="form-label">Nome do projeto</label>
+                <input class="form-input" id="input-proj-nome" placeholder="Nome do projeto" name="nome"/>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Tipo de doador</label>
+                    <select class="form-input" id="input-proj-tipo" name="tipo_doador">
+                        <option>Estatal</option>
+                        <option>Privada</option>
+                        <option>Mista</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nome do doador</label>
+                    <input class="form-input" id="input-proj-doador" placeholder="Nome do doador" name="doador" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Responsável pelo projeto</label>
+                <input class="form-input" id="input-proj-resp" placeholder="Responsável pelo projeto" name="responsavel" />
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Valor total (R$)</label>
+                    <input class="form-input" id="input-proj-valor" type="number" placeholder="R$ 0,00" step="0.01" name="valor_total" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data de início</label>
+                    <input class="form-input" type="date" name="data_inicio" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Data de encerramento prevista</label>
+                <input class="form-input" type="date" name="data_fim" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Descrição</label>
+                <textarea class="form-input" rows="3" placeholder="Descreva o objetivo do projeto..." style="resize:vertical;" name="descricao"></textarea>
+            </div>
+        </div>
+        <div>
+            <label class="form-label">
+                {% for message in messages %}
+                    <div class="alert alert-error">{{ message }}</div>
+                {% endfor %}
+            </label>
+        </div>
+        <div class="actions">
+            <input type="submit" class="btn btn-primary" value="Criar projeto" />
+            <a href="{% url 'projetos' %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

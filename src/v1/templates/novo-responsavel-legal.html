@@ -1,0 +1,45 @@
+{% extends "app.html" %}
+
+{% block content %}
+
+<!-- ALUNOS — NOVO CADASTRO -->
+<div class="screen active" id="screen-alunos-novo">
+    <div class="page-header">
+        <div class="page-title">Novo responsável legal</div>
+        <div class="page-sub">Dados pessoais do responsável legal</div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'novo-responsavel-legal' %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:16px;">Dados do responsável legal</div>
+        <div class="form-grid" style="margin-bottom:14px;">
+            <div class="form-group">
+                <label class="form-label">Nome completo</label>
+                <input class="form-input" id="input-responsavel-nome" placeholder="Nome do responsável" name="nome"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CPF</label>
+                <input class="form-input" id="input-responsavel-cpf" placeholder="000.000.000-00" name="cpf"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone</label>
+                <input class="form-input" id="input-responsavel-telefone" placeholder="(51) 99999-0000" name="telefone"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">E-mail</label>
+                <input class="form-input" id="input-responsavel-email" placeholder="Exemplo@bigua.com.br" name="email"/>
+            </div>
+        </div>
+        <div class="form-group">
+                <label class="form-label">Endereço</label>
+                <input class="form-input" id="input-responsavel-endereco" placeholder="Endereço do responsável legal" name="endereco"/>
+        </div>
+        <div class="actions" style="max-width:800px;">
+            <input type="submit" class="btn btn-primary" value="Cadastrar responsável">
+        <a href="{% url 'responsavel-legal' %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}" style="margin-top:12px;">{{ message }}</div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

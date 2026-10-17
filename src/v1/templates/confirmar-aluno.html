@@ -1,0 +1,62 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-cadastro-confirmar">
+    <div class="page-header">
+        <div class="page-title">Novo Aluno</div>
+        <div class="page-sub">Passo 3 de 3 — Confirmar novo aluno</div>
+    </div>
+    <div class="steps">
+        <div class="step-item">
+            <div class="step-num done">1</div>
+            <div class="step-label done">Dados pessoais</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num done">2</div>
+            <div class="step-label done">Responsabilidade Legal</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num active">3</div>
+            <div class="step-label active">Confirmação</div>
+        </div>
+    </div>
+    <div class="card" style="max-width:640px;">
+        <div class="card-title" style="margin-bottom:16px;">Resumo do aluno</div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="font-size:15px;font-weight:600;">Aluno: {{ aluno.nome }}</div>
+                <div style="font-size:13px;color:var(--text-muted);">CPF: {{ aluno.cpf }}</div>
+                <div style="font-size:13px;color:var(--text-muted);">Nascimento: {{ aluno.nascimento }}</div>
+                <div style="font-size:13px;color:var(--text-muted);">Escola: {{ aluno.escola }}</div>
+                <div style="font-size:13px;color:var(--text-muted);">Série: {{ aluno.serie }}</div>
+            </div>
+            <div class="divider"></div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="font-size:14px;">Responsável legal: {{ responsavel.nome }}</div>
+                <div style="font-size:13px;color:var(--text-muted);">CPF: {{ responsavel.cpf }}</div>
+                <div style="font-size:13px;color:var(--text-muted);">Telefone: {{ responsavel.telefone }}</div>
+                <div style="font-size:13px;color:var(--text-muted);">E-mail: {{ responsavel.email }}</div>
+                <div style="font-size:13px;color:var(--text-muted);">Endereço: {{ responsavel.endereco }}</div>
+            </div>
+            <div class="divider"></div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="font-size:14px;">Projetos selecionados:</div>
+                
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div style="font-size:15px;font-weight:600;">#TODO</div>
+                </div>
+            </div>
+        </div>
+        <form method="post" action="{% url 'confirmar-aluno' aluno.id_aluno %}"> {% csrf_token %}
+            <div class="actions" style="margin-top:24px;">
+                <button type="submit" name="acao" value="confirmar" class="btn btn-primary">Confirmar cadastro</button>
+                <a href="{% url 'excluir-aluno' id_aluno=aluno.id_aluno %}" class="btn btn-ghost">{% csrf_token %} Cancelar</a> 
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

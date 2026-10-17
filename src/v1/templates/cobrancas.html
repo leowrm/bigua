@@ -1,0 +1,65 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-cobrancas">
+    <div class="page-header">
+        <div class="page-title">Cobranças</div>
+        <div class="page-sub">{{cobrancas|length}} cobranças geradas</div>
+    </div>
+    <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr));">
+        <div class="metric-card">
+            <div class="metric-label">Pagas</div>
+            <div class="metric-value" id="metric-pagas">{{totals.pagas.total}}</div>
+            <span class="metric-tag tag-green">R$ {% if totals.pagas.valor == None %} 0 {% else %} {{totals.pagas.valor}} {% endif %}</span>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Pendentes</div>
+            <div class="metric-value" id="metric-pendentes">{{totals.pendentes.total}}</div>
+            <span class="metric-tag tag-amber">R$ {% if totals.pendentes.valor == None %} 0 {% else %} {{totals.pendentes.valor}} {% endif %}</span>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Atrasadas</div>
+            <div class="metric-value" id="metric-atrasadas">{{totals.atrasadas.total}}</div>
+            <span class="metric-tag tag-red">R$ {% if totals.atrasadas.valor == None %} 0 {% else %} {{totals.atrasadas.valor}} {% endif %}</span>
+        </div>
+    </div>
+    <form class="search-row" action="{% url 'cobrancas-filtro' %}" method="post"> {% csrf_token %}
+        <input class="form-input search-input" placeholder="Buscar cobrança por associado ou responsável financeiro..." name="busca"/>
+        <select class="form-input" style="width:160px;" name="estado_pagamento">
+            <option value="Todos">Todos os status</option>
+            <option value="Pago">Pago</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Atrasado">Atrasado</option>
+        </select>
+        <input class="btn btn-ghost" type="submit" value="Buscar" />
+    </form>
+    <div class="card">
+        <table>
+        <tr><th>Associado</th><th>Responsável financeiro</th><th>Valor</th><th>Período de referencia</th><th>Vencimento</th><th>Status</th><th>Data do pagamento</th></tr>
+        </thead><tbody id="tbody-cobrancas">
+        {% for cobranca in cobrancas %}
+        <tr>
+            <td>{{cobranca.id_associado.nome}}</td>
+            <td><div class="dep-tag">{{cobranca.id_associado.responsavelfinanceiro.id_responsavel.nome}}</div></td>
+            <td>R$ {{cobranca.valor}}</td>
+            <td class="td-muted">{{cobranca.periodo_referencia|date:"F \d\e Y"}}</td>
+            <td>{{cobranca.vencimento}}</td>
+            <td><span class="badge b-{{cobranca.estado_pagamento}}">{{cobranca.estado_pagamento}}</span></td>
+            {% if cobranca.estado_pagamento == "Cancelado" %}
+            <td> - </td>
+            {% else %}
+                {% if cobranca.data_pagamento == None %}
+                <td><a class="btn btn-link" href="{% url 'confirmar-pagamento' id_mensalidade=cobranca.id_mensalidade %}">Marcar pago</button></td>
+                {% else %}
+                <td>Pago em {{cobranca.data_pagamento}}</td>
+                {% endif %}
+            {% endif %}
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+
+{% endblock content %}

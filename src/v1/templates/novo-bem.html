@@ -1,0 +1,55 @@
+{% extends "app.html" %}
+
+{% block content %}
+
+<!-- PATRIMÔNIO — NOVO -->
+<div class="screen active" id="screen-patrimonio-novo">
+    <div class="page-header">
+        <div class="page-title">Novo bem patrimonial</div>
+        <div class="page-sub">Registre um novo bem da ONG</div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'novo-bem' %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:16px;">Dados do bem</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="form-group">
+                <label class="form-label">Nome do bem</label>
+                <input class="form-input" id="input-pat-nome" placeholder="Nome do bem" name="nome"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Descrição</label>
+                <textarea class="form-input" id="input-pat-desc" rows="2" placeholder="Descrição do bem, exemplo: material, capacidade, cor, peso..." style="resize:vertical;" name="descricao"></textarea>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Estado</label>
+                    <select class="form-input" id="input-pat-estado" name="estado">
+                        <option>Novo</option>
+                        <option>Usado</option>
+                        <option>Recondicionado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data de aquisição</label>
+                    <input class="form-input" id="input-pat-data" type="date" name="data"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Valor (R$)</label>
+                <input class="form-input" id="input-pat-valor" type="number" placeholder="R$ 0,00" name="valor" step="0.01"/>
+            </div>
+        </div>
+        <div>
+            <label class="form-label">
+                {% for message in messages %}
+                    <div class="alert alert-error">{{ message }}</div>
+                {% endfor %}
+            </label>
+        </div>
+        <div class="actions">
+            <input type="submit" class="btn btn-primary" value="Registrar bem" />
+            <a class="btn btn-ghost" href="{% url 'patrimonio' %}">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

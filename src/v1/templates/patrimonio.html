@@ -1,0 +1,48 @@
+{% extends "app.html" %}
+
+{% block content %}
+
+<!-- PATRIMÔNIO -->
+<div class="screen active" id="screen-patrimonio">
+    <div class="page-header">
+        <div class="page-title">Patrimônio</div>
+        <div class="page-sub" id="count-patrimonio">{{ patrimonios|length }} bens registrados</div>
+    </div>
+    <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr));">
+        <div class="metric-card">
+            <div class="metric-label">Total de bens</div>
+            <div class="metric-value" id="metric-pat-total">{{ patrimonios|length }}</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Valor total</div>
+            <div class="metric-value" id="metric-pat-valor">R$ {{ total_valor }}</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Manutenções registradas</div>
+            <div class="metric-value" id="metric-pat-manut">{{ manutencoes|length }}</div>
+        </div>
+    </div>
+    <form class="search-row" action="{% url 'patrimonio-filtro' %}" method="post"> {% csrf_token %}
+        <input class="form-input search-input" placeholder="Buscar patrimônio por nome..." name="busca" />
+        <input class="btn btn-ghost" type="submit" value="Buscar" />
+        <a class="btn btn-primary" href="{% url 'novo-bem' %}">Novo bem</a>
+    </form>
+    <div class="card">
+        <table>
+            <tr><th>Nome</th><th>Estado</th><th>Valor</th><th>Aquisição</th><th>Manutenções</th><th></th></tr>
+            <tbody id="tbody-patrimonio"></tbody>
+            {% for patrimonio in patrimonios %}
+            <tr>
+                <td>{{ patrimonio.nome_patrimonio }}</td>
+                <td>{{ patrimonio.estado }}</td>
+                <td>R$ {{ patrimonio.valor }}</td>
+                <td>{{ patrimonio.data_aquisicao }}</td>
+                <td>{{ patrimonio.manutencoes|default:"0" }}</td>
+                <td><a class="btn btn-link" href="{% url 'editar-bem' id_patrimonio=patrimonio.id_patrimonio %}">Editar</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,8 @@
+# Jobs da Biguá. Instale com: crontab -u bigua deploy/bigua-cron
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+0 1 * * * cd /opt/bigua/src && /opt/bigua/.venv/bin/python manage.py shell -c "from buiga_utils import gerar_cobranças; gerar_cobranças()" >> /opt/bigua/src/logs/cron.log 2>&1
+*/5 * * * * cd /opt/bigua/src && /opt/bigua/.venv/bin/python manage.py shell -c "from buiga_utils import verificar_cobrancas_atrasadas; verificar_cobrancas_atrasadas()" >> /opt/bigua/src/logs/cron.log 2>&1
+*/5 * * * * cd /opt/bigua/src && /opt/bigua/.venv/bin/python manage.py gerar_disparos_whatsapp >> /opt/bigua/src/logs/cron.log 2>&1
+*/5 * * * * cd /opt/bigua/src && /opt/bigua/.venv/bin/python manage.py enviar_disparos_whatsapp >> /opt/bigua/src/logs/cron.log 2>&1

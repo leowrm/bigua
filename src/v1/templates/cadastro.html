@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <title>Login - Biguá</title>
+    </head>
+    <body>
+        <form  action="{% url 'cadastro' %}" method="post"> {% csrf_token %} 
+            <h1>Bem vindo a Biguá</h1>
+            <p>Preencha os campos abaixo para se cadastrar:</p>
+            <div>
+                <label>Usuário: </label>
+                <br />
+                <input type="text" placeholder="Usuário", name="username"/>
+                <br />
+                <br />
+                <label>Email: </label>
+                <br />
+                <input type="email" placeholder="email" name="email" />
+                <br />
+                <br />
+                <label>Senha: </label>
+                <br />
+                <input type="password" placeholder="••••••••" name="password" />
+                <br />
+                <br />
+                <input type="submit" value="cadastar"/>
+            </div>
+        </form>
+    </body>
+
+</html>
+

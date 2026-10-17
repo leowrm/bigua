@@ -1,0 +1,72 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-alunos-novo">
+    <div class="page-header">
+        <div class="page-title">Novo Aluno</div>
+        <div class="page-sub">Passo 1 de 3 — Dados pessoais do aluno</div>
+    </div>
+    <div class="steps">
+        <div class="step-item">
+            <div class="step-num active">1</div>
+            <div class="step-label active">Dados pessoais</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num pending">2</div>
+            <div class="step-label pending">Responsabilidade Legal</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num pending">3</div>
+            <div class="step-label pending">Confirmação</div>
+        </div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'novo-aluno' %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:16px;">Dados do aluno</div>
+        <div class="form-grid" style="margin-bottom:14px;">
+            <div class="form-group">
+                <label class="form-label">Nome completo</label>
+                <input class="form-input" id="input-aluno-nome" placeholder="Nome do aluno" name="nome"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CPF</label>
+                <input class="form-input" id="input-aluno-cpf" placeholder="000.000.000-00" name="cpf"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Escola</label>
+                <input class="form-input" id="input-aluno-escola" placeholder="Nome da escola" name="escola"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Série</label>
+                <select class="form-input" id="input-aluno-serie" name="serie">
+                    <option>1º ano — Fundamental I</option>
+                    <option>2º ano — Fundamental I</option>
+                    <option>3º ano — Fundamental I</option>
+                    <option>4º ano — Fundamental I</option>
+                    <option>5º ano — Fundamental I</option>
+                    <option>6º ano — Fundamental II</option>
+                    <option>7º ano — Fundamental II</option>
+                    <option>8º ano — Fundamental II</option>
+                    <option>9º ano — Fundamental II</option>
+                    <option>1º ano — Ensino Médio</option>
+                    <option>2º ano — Ensino Médio</option>
+                    <option>3º ano — Ensino Médio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Data de nascimento</label>
+                <input class="form-input" id="input-aluno-nasc" type="date" name="nascimento"/>
+            </div>
+        </div>
+        <div class="actions" style="max-width:800px;">
+            <input type="submit" class="btn btn-primary" value="Próximo">
+            <a href="{% url 'alunos' %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}" style="margin-top:12px;">{{ message }}</div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

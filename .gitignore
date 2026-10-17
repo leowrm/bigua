@@ -1,0 +1,14 @@
+src/__pycache__/
+src/v1/__pycache__/
+src/v1/migrations/__pycache__/
+
+.env
+src/.env
+src/.env.local.backup
+*.pyc
+__pycache__/
+src/logs/
+src/staticfiles/
+src/mydatabase
+src/db.sqlite3
+*.sqlite3

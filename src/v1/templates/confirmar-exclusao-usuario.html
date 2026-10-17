@@ -1,0 +1,26 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active">
+    <div class="page-header">
+        <div class="page-title">Excluir usuário</div>
+        <div class="page-sub">Confirme a exclusão do usuário</div>
+    </div>
+    <div class="card" style="max-width:480px;">
+        <div class="card-title" style="margin-bottom:12px;">Tem certeza que deseja excluir?</div>
+        <div style="margin-bottom:16px;">
+            <div style="font-size:15px;font-weight:600;">{{ usuario.username }}</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Nome: {{ usuario.first_name }}</div>
+        </div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">
+            Esta ação não pode ser desfeita.
+        </div>
+        <div style="display:flex;gap:10px;">
+            <form method="post" action="{% url 'excluir-usuario' usuario.id %}"> {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Confirmar exclusão</button>
+            </form>
+            <a href="{% url 'editar-usuario' usuario.id %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

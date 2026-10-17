@@ -1,0 +1,64 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-cadastro-step1">
+    <div class="page-header">
+        <div class="page-title">Editar Plano</div>
+        <div class="page-sub">Dados do plano</div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'editar-plano' plano.id_plano %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:16px;">Dados do plano</div>
+        <div class="form-grid" style="margin-bottom:14px;">
+            <div class="form-group">
+                <label class="form-label">Nome do plano</label>
+                <input class="form-input" id="input-nome-plano" placeholder="Nome do plano" value="{{ plano.nome_plano }}" name="nome" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Valor</label>
+                <input class="form-input" type="number" step="any" id="input-valor-plano" placeholder="{{ plano.valor }}" value="{{ plano.valor }}" name="valor" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Formas de pagamento</label>
+                <label class="checkbox plan-card">
+                    <input type="checkbox" value="True" name="dinheiro" {% if plano.aceita_dinheiro == True %} checked {% endif %}> Dinheiro
+                </label>
+                <label class="checkbox plan-card">
+                    <input type="checkbox" value="True" name="pix" {% if plano.aceita_pix == True %} checked {% endif %}> Pix
+                </label>
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+                <div class="form-group">
+                    <label class="form-label">Meses cobrados antecipadamente</label>
+                    <input class="form-input" type="number" id="input-meses-antecipados" placeholder="0" value="{{ plano.meses_antecipados }}" name="meses_antecipados" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Regime de cobrança</label>
+                    <select class="form-input" id="input-regime-cobranca"name="regime_cobranca">
+                        <option value="mensal" {% if plano.regime_cobranca == 'mensal' %} selected {% endif %}>Mensal</option>
+                        <option value="trimestral"{% if plano.regime_cobranca == 'trimestral' %} selected {% endif %}>Trimestral</option>
+                        <option value="semestral"{% if plano.regime_cobranca == 'semestral' %} selected {% endif %}>Semestral</option>
+                        <option value="anual"{% if plano.regime_cobranca == 'anual' %} selected {% endif %}>Anual</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div>
+            <label class="form-label">
+                {% for message in messages %}
+                    <div class="alert alert-error">{{ message }}</div>
+                {% endfor %}
+            </label>
+        </div>
+        <div class="actions">
+            <input type="submit" class="btn btn-primary" value="Salvar plano" />
+            <a href="{% url 'planos' %}" class="btn btn-ghost">Cancelar</a>
+            {% if plano.estado == True %}
+            <a href="{% url 'toggle-plano' id_plano=plano.id_plano %}" class="btn btn-danger" style="margin-left: auto;">Inativar</a>
+            {% else %}
+            <a href="{% url 'toggle-plano' id_plano=plano.id_plano %}" class="btn btn-danger" style="margin-left: auto;">Reativar</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

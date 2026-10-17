@@ -1,0 +1,17 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active">
+  <div class="page-header"><div class="page-title">Editar template</div><div class="page-sub">A alteração será reenviada para análise da Meta.</div></div>
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">{{ template_meta.nome }}</div><div class="card-sub">{{ template_meta.idioma }} · {{ template_meta.categoria }} · {{ template_meta.get_status_display }}</div></div></div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group"><label class="form-label">Categoria</label><select class="form-input" name="categoria"><option value="UTILITY" {% if template_meta.categoria == 'UTILITY' %}selected{% endif %}>UTILITY</option><option value="MARKETING" {% if template_meta.categoria == 'MARKETING' %}selected{% endif %}>MARKETING</option></select></div>
+      <div class="form-group"><label class="form-label">Corpo</label><textarea class="form-input" name="corpo" rows="8" required>{{ template_meta.corpo }}</textarea><div class="form-help">O nome e o idioma não podem ser alterados pela edição; crie outro template se precisar mudar esses dados.</div></div>
+      <div class="form-group"><label class="form-label">Exemplos das variáveis</label><input class="form-input" name="exemplos" value="{{ exemplos }}" placeholder="Ana Silva, R$ 50,00, 10/09/2026, pix@bigua.org"></div>
+      <div class="actions"><button class="btn btn-primary" type="submit">Enviar alteração para a Meta</button><a class="btn btn-ghost" href="{% url 'whatsapp-templates' %}">Cancelar</a></div>
+    </form>
+  </div>
+</div>
+{% endblock content %}

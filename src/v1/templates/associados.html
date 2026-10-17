@@ -1,0 +1,37 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-associados">
+    <div class="page-header">
+        <div class="page-title">Associados</div>
+        <div class="page-sub" id="count-associados">{{ associados|length }} associados cadastrados</div>
+    </div>
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}" style="margin-bottom:12px;">{{ message }}</div>
+    {% endfor %}
+    <form class="search-row" action="{% url 'associados-filtro' %}" method="post"> {% csrf_token %}
+        <input class="form-input search-input" placeholder="Buscar por nome ou CPF..." name="busca"/>
+        <input class="btn btn-ghost" type="submit" value="Buscar" />
+        <a class="btn btn-primary" href="/v1/associado/novo">Novo associado</a>
+    </form>
+    <div class="card">
+        <table>
+        <tr><th>Nome</th><th>CPF</th><th>Plano</th><th>Tipo</th><th>Estado</th><th></th></tr>
+        {%for associado in associados %}
+        <tr>
+            <td>{{ associado.nome }}</td>
+            <td class="td-mono">{{ associado.cpf }}</td>
+            <td>{{ associado.id_planos }}</td>
+            {% if associado.responsavel %}
+                <td><span class="badge b-responsavel">Responsável</span></td>
+            {% else %}
+                <td><span class="badge b-dependente">Dependente</span></td>
+            {% endif %}
+            <td><span class="badge b-{{ associado.estado }}"> {{ associado.estado }} </span></td>
+            <td><a class="btn btn-link" href="/v1/associado/editar/{{ associado.id_associado }}">Editar</a></td>
+        </tr>
+        {%endfor%}
+        </table>
+    </div>
+</div>
+{% endblock content %}

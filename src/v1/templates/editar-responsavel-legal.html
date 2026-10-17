@@ -1,0 +1,46 @@
+{% extends "app.html" %}
+
+{% block content %}
+
+<!-- ALUNOS — NOVO CADASTRO -->
+<div class="screen active" id="screen-alunos-novo">
+    <div class="page-header">
+        <div class="page-title">Editar responsável legal</div>
+        <div class="page-sub">Dados pessoais do responsável legal</div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'editar-responsavel-legal' responsavel.id_responsavel %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:16px;">Dados do responsável legal</div>
+        <div class="form-grid" style="margin-bottom:14px;">
+            <div class="form-group">
+                <label class="form-label">Nome completo</label>
+                <input class="form-input" id="input-responsavel-nome" placeholder="{{responsavel.nome}}" value="{{responsavel.nome}}" name="nome"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CPF</label>
+                <input class="form-input" id="input-responsavel-cpf" placeholder="{{responsavel.cpf}}" name="cpf" disabled/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone</label>
+                <input class="form-input" id="input-responsavel-telefone" placeholder="{{responsavel.telefone}}" value="{{responsavel.telefone}}" name="telefone"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">E-mail</label>
+                <input class="form-input" id="input-responsavel-email" placeholder="{{responsavel.email}}" value="{{responsavel.email}}" name="email"/>
+            </div>
+        </div>
+        <div class="form-group">
+                <label class="form-label">Endereço</label>
+            <input class="form-input" id="input-responsavel-endereco" placeholder="{{responsavel.endereco}}" value="{{responsavel.endereco}}" name="endereco"/>
+        </div>
+        <div class="actions" style="max-width:800px;">
+            <input type="submit" class="btn btn-primary" value="Salvar">
+            <a href="{% url 'responsavel-legal' %}" class="btn btn-ghost">Cancelar</a>
+            <a href="{% url 'confirmar-exclusao-responsavel-legal' id_responsavel_legal=responsavel.id_responsavel %}" class="btn btn-danger" style="margin-left: auto;">Excluir</a>
+        </div>
+    </form>
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}" style="margin-top:12px;">{{ message }}</div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

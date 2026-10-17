@@ -1,0 +1,126 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-admins">
+    <div class="page-header">
+        <div class="page-title">Administração</div>
+        <div class="page-sub">Gerencie os acessos ao sistema</div>
+    </div>
+    <div class="grid-2">
+        <!-- LISTA DE ADMINS -->
+        <div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Usuários cadastrados</div>
+                </div>
+                {% for usuario in usuarios %}
+                <div style="background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:6px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                    <div>
+                        <div style="font-size:13px;font-weight:500;color:var(--text);">{{ usuario.perfil.first_name }} </div>
+                        <div style="font-size:11px;color:var(--text-muted);">Username: {{usuario.perfil.username}} | Função na ONG: {{ usuario.perfil.last_name }} | E-mail: {{ usuario.perfil.email }}</div>
+                    </div>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        {% if usuario.perfil.is_staff %}
+                        <span class="badge" style="background:var(--orange-dim);color:var(--orange);">Master</span>
+                        {% endif %}
+                        <a class="btn btn-ghost btn-sm" href="/v1/administracao/editar/{{ usuario.perfil.id }}">Editar</a>
+                    </div>
+                </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                        {% if 'v1.view_associado' in usuario.acessos %}
+                        <span class="dep-tag">Associados</span>
+                        {% endif %}
+                        {% if 'v1.view_planos' in usuario.acessos %}
+                        <span class="dep-tag">Planos</span>
+                        {% endif %}
+                        {% if 'v1.view_mensalidades' in usuario.acessos %}
+                        <span class="dep-tag">Cobrança</span>
+                        {% endif %}
+                        {% if 'v1.view_patrimonio' in usuario.acessos %}
+                        <span class="dep-tag">Patrimônio</span>
+                        {% endif %}
+                        {% if 'v1.view_projeto' in usuario.acessos %}
+                        <span class="dep-tag">Projetos</span>
+                        {% endif %}
+                        {% if 'whatsapp.view_configuracaowhatsapp' in usuario.acessos %}
+                        <span class="dep-tag">WhatsApp</span>
+                        {% endif %}
+                        {% if usuario.perfil.is_staff %}
+                        <span class="dep-tag">Administração</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- FORMULÁRIO CADASTRO -->
+        <div>
+            <form class="card" action="{% url 'novo-usuario' %}" method="post"> {% csrf_token %}
+                <div class="card-title" style="margin-bottom:16px;">Cadastrar novo Usuário</div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                <div class="form-group">
+                    <label class="form-label">Usuário</label>
+                    <input class="form-input" id="input-admin-username" placeholder="Usuário" name="username" value="{{ form_data.username|default:'' }}"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nome completo</label>
+                    <input class="form-input" id="input-admin-nome" placeholder="Nome completo" name="nome" value="{{ form_data.nome|default:'' }}"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">E-mail</label>
+                    <input class="form-input" id="input-admin-email" type="email" placeholder="Email" name="email" value="{{ form_data.email|default:'' }}"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Senha</label>
+                    <input class="form-input" id="input-admin-senha" type="password" placeholder="Senha" name="senha"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cargo na ONG</label>
+                    <input class="form-input" id="input-admin-funcao" placeholder="Cargo" name="funcao" value="{{ form_data.funcao|default:'' }}"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Seções liberadas</label>
+                    <div id="checkboxes-permissoes" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;background:var(--dark3);border-radius:8px;padding:12px;">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                            <input type="checkbox" value="view_associado" name="associados" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'view_associado' in selected_permissions %}checked{% endif %} />
+                            Associados
+                        </label>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                            <input type="checkbox" value="view_planos" name="planos" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'view_planos' in selected_permissions %}checked{% endif %} />
+                            Planos
+                        </label>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                            <input type="checkbox" value="view_mensalidades" name="mensalidades" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'view_mensalidades' in selected_permissions %}checked{% endif %} />
+                            Cobranças
+                        </label>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                            <input type="checkbox" value="view_patrimonio" name="patrimonio" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'view_patrimonio' in selected_permissions %}checked{% endif %} />
+                            Patrimonio
+                        </label>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                            <input type="checkbox" value="view_projeto" name="projetos" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'view_projeto' in selected_permissions %}checked{% endif %} />
+                            Projetos
+                        </label>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                            <input type="checkbox" value="True" name="administracao" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'True' in selected_permissions %}checked{% endif %} />
+                            Administração
+                        </label>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                            <input type="checkbox" value="view_configuracaowhatsapp" name="whatsapp" style="width:14px;height:14px;accent-color:var(--orange);cursor:pointer;" {% if 'view_configuracaowhatsapp' in selected_permissions %}checked{% endif %} />
+                            WhatsApp
+                        </label>
+                    </div>
+                </div>
+                    <input type="submit" class="btn btn-primary" value="Cadastrar usuário" />
+                </div>
+                {% for message in messages %}
+                    <div class="alert alert-error">{{ message }}</div>
+                {% endfor %}
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

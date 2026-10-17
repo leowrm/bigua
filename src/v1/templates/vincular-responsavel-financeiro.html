@@ -1,0 +1,60 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-cadastro-step2-dep">
+    <div class="page-header">
+        <div class="page-title">Novo associado</div>
+        <div class="page-sub">Passo 2 de 4 — Responsabilidade financeira</div>
+    </div>
+    <div class="steps">
+        <div class="step-item">
+            <div class="step-num done">✓</div>
+            <div class="step-label done">Dados pessoais</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num active">2</div>
+            <div class="step-label active">Responsabilidade</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num pending">3</div>
+            <div class="step-label pending">Plano</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num pending">4</div>
+            <div class="step-label pending">Confirmação</div>
+        </div>
+    </div>
+    <div class="card" style="max-width:640px;">
+        <div class="card-title" style="margin-bottom:16px;">Responsabilidade financeira</div>
+        <form class="form-group" action="{% url 'buscar-responsavel' id_associado=associado.id_associado %}" method="post"> {% csrf_token %}
+            <label class="form-label">Busque o responsável financeiro:</label>
+            <div style="display:flex;gap:8px;margin-top:6px;">
+                <input class="form-input" placeholder="Digite o CPF do novo responsável financeiro" style="flex:1;" name="cpf"/> 
+                <input type="submit" class="btn btn-ghost" value="Buscar" />
+            </div>
+        </form>
+        <form class="form-group" action="{% url 'vincular-responsavel' id_associado=associado.id_associado id_responsavel=responsavel.id_associado %}" method="post"> {% csrf_token %}
+            <div class="resp-card">
+                <div class="resp-name">Associado: {{ associado.nome }}</div>
+                <div class="resp-info">Responsável financeiro: {{ responsavel.nome}}</div>
+                <div class="resp-info">CPF: {{ responsavel.cpf }}</div>
+                <div class="resp-info">Telefone: {{ responsavel.telefone }}</div>
+            </div>
+            <div>
+                <label class="form-label">
+                    {% for message in messages %}
+                        <div class="alert alert-error">{{ message }}</div>
+                    {% endfor %}
+                </label>
+            </div>
+            <div class="actions" style="margin-top:16px;">
+                <input type="submit" class="btn btn-primary" value="Próximo" />
+                <a href="{% url 'excluir-associado' id_associado=associado.id_associado %}" class="btn btn-ghost"> {% csrf_token %} Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

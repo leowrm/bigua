@@ -1,0 +1,68 @@
+{% extends "app.html" %}
+
+{% block content %}
+
+<!-- ALUNOS — NOVO CADASTRO -->
+<div class="screen active" id="screen-alunos-novo">
+    <form style="margin-bottom:6px;" action="{% url 'editar-aluno' id_aluno=aluno.id_aluno %}" method="post"> {% csrf_token %}
+        <div class="page-header">
+            <div class="page-title">Editar aluno</div>
+            <div class="page-sub">Dados pessoais do aluno</div>
+        </div>
+        <div class="card" style="max-width:640px;">
+            <div class="card-title" style="margin-bottom:16px;">Dados do aluno</div>
+            <div class="form-grid" style="margin-bottom:14px;">
+                <div class="form-group">
+                    <label class="form-label">Nome completo</label>
+                    <input class="form-input" id="input-aluno-nome" placeholder="Nome do aluno" name="nome"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CPF <span style="font-size:11px;color:var(--text-dim);">(opcional)</span></label>
+                    <input class="form-input" id="input-aluno-cpf" placeholder="000.000.000-00" name="cpf"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Escola</label>
+                    <input class="form-input" id="input-aluno-escola" placeholder="Nome da escola" name="escola"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Série</label>
+                    <select class="form-input" id="input-aluno-serie" name="serie">
+                        <option>1º ano — Fundamental I</option>
+                        <option>2º ano — Fundamental I</option>
+                        <option>3º ano — Fundamental I</option>
+                        <option>4º ano — Fundamental I</option>
+                        <option>5º ano — Fundamental I</option>
+                        <option>6º ano — Fundamental II</option>
+                        <option>7º ano — Fundamental II</option>
+                        <option>8º ano — Fundamental II</option>
+                        <option>9º ano — Fundamental II</option>
+                        <option>1º ano — Ensino Médio</option>
+                        <option>2º ano — Ensino Médio</option>
+                        <option>3º ano — Ensino Médio</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data de nascimento</label>
+                    <input class="form-input" id="input-aluno-nasc" type="date" name="nascimento"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Responsável legal</label>
+                <div>
+                    <input class="form-input" id="input-resp-nome" placeholder="{{ aluno.responsabilidadelegal.id_responsavel.nome }}" name="resp_nome" disabled/>
+                    <a class="btn btn-link" style="padding-left: 10px;" href="{% url 'alterar-responsavel-legal' id_aluno=aluno.id_aluno  id_responsavel_legal=aluno.responsabilidadelegal.id_responsavel.id_responsavel %}">Editar</a>
+                </div>
+            </div>
+            <div class="actions" style="max-width:800px;">
+                <input type="submit" class="btn btn-primary" value="Concluir">
+                <a href="{% url 'alunos' %}" class="btn btn-ghost">Cancelar</a>
+                <a href="{% url 'confirmar-exclusao-aluno' id_aluno=aluno.id_aluno %}" class="btn btn-danger" style="margin-left: auto;">Excluir</a>
+            </div>
+        </div>
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}" style="margin-top:12px;">{{ message }}</div>
+        {% endfor %}
+    </form>
+</div>
+
+{% endblock content %}

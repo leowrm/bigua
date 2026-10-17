@@ -1,0 +1,16 @@
+[Unit]
+Description=Biguá Django application
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=bigua
+Group=bigua
+WorkingDirectory=/opt/bigua/src
+EnvironmentFile=/opt/bigua/src/.env
+ExecStart=/opt/bigua/.venv/bin/gunicorn webapi.wsgi:application --bind 127.0.0.1:8000 --workers 1 --timeout 120 --access-logfile - --error-logfile -
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,56 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active">
+  <div class="page-header">
+    <div class="page-title">WhatsApp · Templates da Meta</div>
+    <div class="page-sub">Crie, edite e acompanhe os templates usados nos lembretes.</div>
+  </div>
+
+  {% if messages %}{% for message in messages %}
+    <div class="info-box" style="{% if message.tags == 'error' %}background:#fff1f0;color:#b42318;{% else %}background:var(--green-bg);color:#4d7c0f;{% endif %}">{{ message }}</div>
+  {% endfor %}{% endif %}
+
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">Sincronização</div><div class="card-sub">Busca na Meta os templates existentes e seus status atuais.</div></div></div>
+    <form method="post" class="actions" style="margin-top:0;">
+      {% csrf_token %}<input type="hidden" name="acao" value="sincronizar">
+      <button class="btn btn-primary" type="submit">Sincronizar com a Meta</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">Templates sincronizados</div><div class="card-sub">O template marcado como ativo é usado nos lembretes automáticos.</div></div></div>
+    <table>
+      <tr><th>Nome</th><th>Idioma</th><th>Categoria</th><th>Status</th><th>Ações</th></tr>
+      {% for template in templates_meta %}
+      <tr>
+        <td><strong>{{ template.nome }}</strong><br><span class="td-muted">{{ template.corpo|truncatechars:90 }}</span></td>
+        <td class="td-muted">{{ template.idioma }}</td>
+        <td class="td-muted">{{ template.categoria }}</td>
+        <td>{% if template.status == 'APPROVED' %}<span class="badge b-pago">Aprovado</span>{% elif template.status == 'REJECTED' %}<span class="badge b-atrasado">Rejeitado</span>{% else %}<span class="badge b-pendente">{{ template.get_status_display }}</span>{% endif %}</td>
+        <td>
+          <a class="btn btn-ghost" href="{% url 'whatsapp-template-editar' template.id %}">Editar</a>
+          {% if template.nome == template_cobranca and template.idioma == idioma_cobranca %}<span class="td-muted">Em uso</span>{% else %}<form method="post" action="{% url 'whatsapp-template-usar' template.id %}" style="display:inline;">{% csrf_token %}<button class="btn btn-ghost" type="submit">Usar na cobrança</button></form>{% endif %}
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="5" class="td-muted">Nenhum template sincronizado. Configure as credenciais e sincronize.</td></tr>{% endfor %}
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">Criar template de texto</div><div class="card-sub">A Meta analisará o template antes de permitir o envio.</div></div></div>
+    <form method="post">
+      {% csrf_token %}<input type="hidden" name="acao" value="criar">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Nome técnico</label><input class="form-input" name="nome" required pattern="[a-z0-9_]+" placeholder="lembrete_mensalidade_bigua"></div>
+        <div class="form-group"><label class="form-label">Idioma</label><input class="form-input" name="idioma" value="pt_BR" required></div>
+        <div class="form-group"><label class="form-label">Categoria</label><select class="form-input" name="categoria"><option value="UTILITY">UTILITY</option><option value="MARKETING">MARKETING</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Corpo</label><textarea class="form-input" name="corpo" rows="5" required placeholder="Olá, {% templatetag openvariable %}1{% templatetag closevariable %}. Sua mensalidade de {% templatetag openvariable %}2{% templatetag closevariable %} vence em {% templatetag openvariable %}3{% templatetag closevariable %}."></textarea><div class="form-help">Use variáveis no formato {% templatetag openvariable %}1{% templatetag closevariable %}, {% templatetag openvariable %}2{% templatetag closevariable %} etc.</div></div>
+      <div class="form-group"><label class="form-label">Exemplos das variáveis</label><input class="form-input" name="exemplos" placeholder="Ana Silva, R$ 50,00, 10/09/2026, pix@bigua.org"><div class="form-help">Informe um exemplo por variável, na mesma ordem. A Meta exige esses exemplos quando houver variáveis.</div></div>
+      <button class="btn btn-primary" type="submit">Enviar para aprovação</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

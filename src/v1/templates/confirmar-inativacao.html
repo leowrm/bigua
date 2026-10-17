@@ -1,0 +1,24 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active">
+    <div class="page-header">
+        <div class="page-title">Inativar associado</div>
+        <div class="page-sub">Confirme a inativação do associado</div>
+    </div>
+    <div class="card" style="max-width:480px;">
+        <div class="card-title" style="margin-bottom:12px;">Tem certeza que deseja inativar?</div>
+        <div style="margin-bottom:16px;">
+            <div style="font-size:15px;font-weight:600;">{{ associado.nome }}</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">CPF: {{ associado.cpf }}</div>
+            <div style="font-size:13px;color:var(--text-muted);">Plano: {{ associado.id_planos }}</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <form method="post" action="{% url 'inativar-associado' id_associado=associado.id_associado %}"> {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Confirmar inativação</button>
+            </form>
+            <a href="{% url 'editar-associado' id_associado=associado.id_associado %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

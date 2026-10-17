@@ -1,0 +1,105 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-whatsapp-conversas">
+    <div class="page-header">
+        <div class="page-title">WhatsApp · Conversas</div>
+        <div class="page-sub">Acompanhe em tempo real as conversas dos associados com o bot (somente leitura)</div>
+    </div>
+
+    {% if not conversas %}
+        <div class="info-box">
+            Nenhuma conversa registrada ainda. Assim que um associado mandar mensagem pro número da Biguá
+            (com o webhook publicado), ela vai aparecer aqui automaticamente.
+        </div>
+    {% endif %}
+
+    <div class="card" style="padding:0;overflow:hidden;">
+        <div style="display:flex;height:600px;">
+
+            <!-- Lista de conversas -->
+            <div style="width:300px;flex-shrink:0;border-right:1px solid var(--border);overflow-y:auto;background:var(--dark2);">
+                <div style="padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.04em;">
+                    Conversas ({{ conversas|length }})
+                </div>
+
+                {% for c in conversas %}
+                    <a href="?telefone={{ c.telefone }}"
+                       style="display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;
+                              {% if c.telefone == telefone_selecionado %}background:var(--dark3);{% endif %}">
+                        <div style="width:38px;height:38px;border-radius:50%;background:#005c4b;display:flex;align-items:center;justify-content:center;
+                                     color:#fff;font-weight:600;font-size:14px;flex-shrink:0;">
+                            {% if c.associado %}{{ c.associado.nome|first|upper }}{% else %}?{% endif %}
+                        </div>
+                        <div style="min-width:0;flex:1;">
+                            <div style="display:flex;justify-content:space-between;gap:6px;">
+                                <span style="font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                    {% if c.associado %}{{ c.associado.nome }}{% else %}{{ c.telefone }}{% endif %}
+                                </span>
+                                <span style="font-size:10.5px;color:var(--text-dim);white-space:nowrap;">{{ c.ultima_data|date:"d/m H:i" }}</span>
+                            </div>
+                            <div style="font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;">
+                                {{ c.ultima_mensagem|truncatechars:42 }}
+                            </div>
+                            {% if c.aguardando_humano %}
+                                <span class="metric-tag tag-amber" style="margin-top:5px;display:inline-block;">aguardando humano</span>
+                            {% endif %}
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <!-- Histórico da conversa selecionada -->
+            <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+
+                {% if telefone_selecionado %}
+                    <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <div style="font-weight:600;font-size:14px;">
+                                {% for c in conversas %}{% if c.telefone == telefone_selecionado %}
+                                    {% if c.associado %}{{ c.associado.nome }}{% else %}Número não cadastrado{% endif %}
+                                {% endif %}{% endfor %}
+                            </div>
+                            <div style="font-size:12px;color:var(--text-dim);">{{ telefone_selecionado }}</div>
+                        </div>
+                        {% for c in conversas %}{% if c.telefone == telefone_selecionado and c.aguardando_humano %}
+                            <span class="metric-tag tag-amber">Pediu atendimento humano</span>
+                        {% endif %}{% endfor %}
+                    </div>
+
+                    <div style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:6px;
+                                background-color:#0b141a;
+                                background-image:radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+                                background-size:14px 14px;">
+                        {% for m in mensagens %}
+                            <div style="display:flex;justify-content:{% if m.direcao == 'RECEBIDA' %}flex-end{% else %}flex-start{% endif %};">
+                                <div style="max-width:70%;padding:7px 9px 8px;border-radius:8px;font-size:13.5px;line-height:1.35;
+                                            white-space:pre-wrap;box-shadow:0 1px 1px rgba(0,0,0,0.3);
+                                            {% if m.direcao == 'RECEBIDA' %}
+                                                background:#005c4b;color:#e9edef;border-top-right-radius:0;
+                                            {% else %}
+                                                background:#202c33;color:#e9edef;border-top-left-radius:0;
+                                            {% endif %}">
+                                    <div>{{ m.mensagem }}</div>
+                                    <div style="font-size:10px;opacity:0.55;text-align:right;margin-top:2px;">
+                                        {{ m.data_hora|date:"d/m H:i" }} · {% if m.direcao == 'RECEBIDA' %}associado{% else %}bot{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div style="padding:10px 16px;border-top:1px solid var(--border);background:var(--dark3);font-size:12px;color:var(--text-dim);">
+                        Painel somente leitura. Pra falar diretamente com o associado, use o número de atendimento humano configurado
+                        (<a href="{% url 'whatsapp-configuracao' %}" class="btn-link" style="display:inline;">editar em Configuração</a>).
+                    </div>
+                {% else %}
+                    <div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:13px;">
+                        Selecione uma conversa à esquerda
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

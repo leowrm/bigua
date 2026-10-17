@@ -1,0 +1,72 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-cadastro-step1">
+    <div class="page-header">
+        <div class="page-title">Novo associado</div>
+        <div class="page-sub">Passo 1 de 4 — Dados pessoais</div>
+    </div>
+    <div class="steps">
+        <div class="step-item">
+            <div class="step-num active">1</div>
+            <div class="step-label active">Dados pessoais</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num pending">2</div>
+            <div class="step-label pending">Responsabilidade</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num pending">3</div>
+            <div class="step-label pending">Plano</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-num pending">4</div>
+            <div class="step-label pending">Confirmação</div>
+        </div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'novo-associado' %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:16px;">Dados pessoais</div>
+        <div class="form-grid" style="margin-bottom:14px;">
+            <div class="form-group">
+                <label class="form-label">Nome completo</label>
+                <input class="form-input{% if invalid_field == 'nome' %} input-error{% endif %}" id="input-nome-assoc" placeholder="Ex: Ana Silva" name="nome" value="{{ form_data.nome|default:'' }}" {% if invalid_field == 'nome' %}aria-invalid="true" autofocus{% endif %} />
+            </div>
+            <div class="form-group">
+                <label class="form-label">CPF</label>
+                <input class="form-input{% if invalid_field == 'cpf' %} input-error{% endif %}" id="input-cpf-assoc" placeholder="000.000.000-00" name="cpf" value="{{ form_data.cpf|default:'' }}" {% if invalid_field == 'cpf' %}aria-invalid="true" autofocus{% endif %} />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone (WhatsApp)</label>
+                <input class="form-input{% if invalid_field == 'telefone' %} input-error{% endif %}" id="input-tel-assoc" placeholder="(51) 99999-9999" name="telefone" value="{{ form_data.telefone|default:'' }}" {% if invalid_field == 'telefone' %}aria-invalid="true" autofocus{% endif %} />
+            </div>
+            <div class="form-group">
+                <label class="form-label">E-mail</label>
+                <input class="form-input{% if invalid_field == 'email' %} input-error{% endif %}" id="input-email-assoc" placeholder="email@exemplo.com" name="email" value="{{ form_data.email|default:'' }}" {% if invalid_field == 'email' %}aria-invalid="true" autofocus{% endif %} />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Data de nascimento</label>
+                <input class="form-input{% if invalid_field == 'nascimento' %} input-error{% endif %}" id="input-data-nasc-assoc" type="date" name="nascimento" value="{{ form_data.nascimento|default:'' }}" {% if invalid_field == 'nascimento' %}aria-invalid="true" autofocus{% endif %} />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Dia da cobrança</label>
+                <input class="form-input{% if invalid_field == 'dia_cobranca' %} input-error{% endif %}" id="input-dia-cobranca-assoc" type="number" name="dia_cobranca" min="1" max="29" step="1" value="{{ form_data.dia_cobranca|default:'' }}" {% if invalid_field == 'dia_cobranca' %}aria-invalid="true" autofocus{% endif %}/>
+            </div>
+        </div>
+        <div>
+            <label class="form-label">
+                {% for message in messages %}
+                    <div class="alert alert-error">{{ message }}</div>
+                {% endfor %}
+            </label>
+        </div>
+        <div class="actions">
+            <input type="submit" class="btn btn-primary" value="Próximo" />
+            <a href="{% url 'associados' %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

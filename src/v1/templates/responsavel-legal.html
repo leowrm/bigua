@@ -1,0 +1,33 @@
+{% extends "app.html" %}
+
+{% block content %}
+
+<div class="screen active" id="screen-alunos">
+    <div class="page-header">
+        <div class="page-title">Responsaveis legais</div>
+        <div class="page-sub" id="count-alunos">{{responsaveis|length}} responsaveis legais cadastrados</div>
+    </div>
+    <form class="search-row" action="{% url 'responsavel-legal-filtro' %}" method="post"> {% csrf_token %}
+        <input class="form-input search-input" placeholder="Buscar responsavel por nome ou CPF..." name="busca" />
+        <input class="btn btn-ghost" type="submit" value="Buscar" />
+        <a class="btn btn-primary" href="{% url 'novo-responsavel-legal' %}">Novo responsavel legal</a>
+    </form>
+    <div class="card">
+        <table>
+            <tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Alunos</th><th>Detalhes</th></tr>
+            {%for responsavel in responsaveis %}
+            <tbody id="tbody-alunos">
+            <tr>
+                <td>{{ responsavel.nome }}</td>
+                <td>{{ responsavel.telefone }}</td>
+                <td>{{ responsavel.email }}</td>
+                <td> Nome dos alunos</td>
+                <td><a class="btn btn-link" href="{% url 'editar-responsavel-legal' responsavel.id_responsavel %}">Editar</a></td>
+            </tr>
+            </tbody>
+            {%endfor%}
+        </table>
+    </div>
+</div>
+
+{% endblock %}

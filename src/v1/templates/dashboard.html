@@ -1,0 +1,88 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-dashboard">
+    <div class="page-header">
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Visão geral — março 2025</div>
+    </div>
+    <div class="metrics">
+        <div class="metric-card">
+        <div class="metric-label">Associados ativos</div>
+        <div class="metric-value"> {{ associados_ativos }}</div>
+        <!--<span class="metric-tag tag-green">+2 este mês</span>-->
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Receita mensal esperada</div>
+        <div class="metric-value">R$ {{ receita_mensal_esperada }}</div>
+        <span class="metric-tag tag-green">R$ {{ receita_mes|floatformat:2  }} recebido</span>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Inadimplentes no mês</div>
+        <div class="metric-value">{{ inadimplentes }}</div>
+        <span class="metric-tag tag-red">{{ percentual_inadimplentes|floatformat:2 }} %</span>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Cobranças no mês</div>
+        <div class="metric-value">{{ cobrancas }}</div>
+        <span class="metric-tag tag-amber">{{ cobrancas_abertas }} em aberto</span>
+        </div>
+    </div>
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <div><div class="card-title">Receita — últimos 6 meses</div></div>
+            </div>
+            <div class="chart-bars">
+                {% for receita in historico_receitas %}
+                <div class="bar-col">
+                    <div class="bar-val">{{receita.total_pago}}</div>
+                    <div class="bar" style="height:{{ receita.percentual }}px;opacity:0.55;"></div>
+                    <div class="bar-label">{{ receita.periodo_referencia|date:"F Y" }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><div class="card-title">Próximos aniversariantes</div><span id="aniv-mes" style="font-size:12px;color:var(--text-muted);"></span></div>
+            <div id="lista-aniversariantes" style="display:flex;flex-direction:column;gap:8px;"></div>
+            {% for aniversariante in aniversariantes %}
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:var(--orange-dim);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--orange);font-weight:600;">AB</div>
+                    <div>
+                        <div style="font-size:13px;font-weight:500;color:var(--text);">{{aniversariante.nome}}</div>
+                    </div>
+                </div>
+                <div style="font-size:13px;color:var(--orange);font-weight:500;">{{ aniversariante.nascimento|date:"d/F" }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="card">
+        <table>
+        <tr><th>Projeto</th><th>Doador</th><th>Tipo</th><th>Responsável</th><th>Valor total</th><th>Progresso</th><th>Estado</th></tr>
+        <thead><tbody id="tbody-projetos">
+            {% for projeto in projetos %}
+            <tr>
+                <td><div style="font-size:13px;font-weight:500;">{{ projeto.nome_projeto }}</div><div class="td-muted">Início: {{ projeto.data_inicio }}</div></td>
+                <td class="td-muted">{{ projeto.nome_doador }}</td>
+                <td><span class="badge" style="background:var(--blue-bg);color:var(--blue);">{{ projeto.tipo_doador }}</span></td>
+                <td class="td-muted">{{ projeto.responsavel }}</td>
+                <td>R$ {{ projeto.valor }}</td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="width:60px;height:5px;background:var(--dark3);border-radius:3px;overflow:hidden;">
+                            <div style="width:{{ projeto.percentual|floatformat:0 }}%;height:100%;background:var(--orange);border-radius:3px;"></div>
+                        </div>
+                        <span style="font-size:12px;color:var(--text-muted);">{{ projeto.percentual|floatformat:1 }}%</span>
+                    </div>
+                </td>
+                <td><span class="badge b-ativo">{{ projeto.estado }}</span></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock content %}

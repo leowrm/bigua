@@ -1,0 +1,21 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active">
+    <div class="card" style="max-width:480px;margin:60px auto;">
+        <div class="card-header">
+            <div class="card-title">Confirmar inativação</div>
+        </div>
+        <p style="margin:16px 0;">
+            Tem certeza que deseja inativar o plano <strong>{{ plano.nome_plano }}</strong>?
+            Ele não aparecerá mais na lista de planos ativos.
+        </p>
+        <div style="display:flex;gap:8px;">
+            <form method="POST"> {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Sim, inativar</button>
+            </form>
+            <a href="{% url 'planos' %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

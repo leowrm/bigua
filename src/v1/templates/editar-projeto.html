@@ -1,0 +1,103 @@
+{% extends "app.html" %}
+
+{% block content %}
+<!-- PROJETOS DETALHE -->
+<div class="screen active" id="screen-projetos-detalhe">
+    <div class="page-header">
+        <div class="page-title" id="detalhe-titulo">Projeto: {{ projeto.nome_projeto }}</div>
+        <div class="page-sub" id="detalhe-sub">{{ projeto.nome_doador }} · {{ projeto.tipo_doador }} · Responsável: {{ projeto.responsavel }}</div>
+        <div class="page-sub" id="detalhe-sub">{{ projeto.descricao }}</div>    
+    </div>
+    <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr));">
+        <div class="metric-card">
+            <div class="metric-label">Valor total do projeto</div>
+            <div class="metric-value">R$&nbsp;{{ projeto.valor }}</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Total gasto</div>
+            <div class="metric-value">R$&nbsp;{{ gasto_total }} </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Saldo restante</div>
+            <div class="metric-value">R$&nbsp; {{ disponibilidade }} </div>
+        </div>
+    </div>
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Gastos registrados</div>
+            </div>
+            <table>
+                <tr><th>Descrição</th><th>Categoria</th><th>Data</th><th>Valor</th><th></th></tr>
+                <tbody id="tbody-gastos">
+                {% for gasto in gastos %}
+                <tr>
+                    <td>{{ gasto.descricao }}</td>
+                    <td><span class="badge" style="font-size:10px;">{{ gasto.categoria }}</span></td>
+                    <td class="td-muted">{{ gasto.data }}</td>
+                    <td>R$ {{ gasto.valor }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <form class="card" action="{% url 'novo-gasto' id_projeto=projeto.id_projeto %}" method="post"> {% csrf_token %}
+            <div class="card-header">
+                <div class="card-title">Registrar novo gasto</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="form-group">
+                <label class="form-label">Descrição</label>
+                <input class="form-input" id="input-gasto-desc" placeholder="Descrição da compra" name="descricao" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Categoria</label>
+                <select class="form-input" id="input-gasto-cat" name="categoria">
+                    <option>Material</option>
+                    <option>Logística</option>
+                    <option>Serviço</option>
+                    <option>Pessoal</option>
+                    <option>Outros</option>
+                </select>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Data</label>
+                    <input class="form-input" id="input-gasto-data" type="date" name="data"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Valor (R$)</label>
+                    <input class="form-input" id="input-gasto-valor" type="number" placeholder="R$ 0,00" name="valor"/>
+                </div>
+            </div>
+
+            {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}" style="margin-bottom:12px;">{{ message }}</div>
+            {% endfor %}
+
+            <input type="submit" class="btn btn-primary" value="Salvar gasto"/>
+            </div>
+        </form>
+    </div>
+    <div class="card" style="margin-top:0;">
+        <div class="card-header">
+            <div class="card-title">Alunos do projeto</div>
+            <a class="btn btn-primary btn-sm" href="vincular-aluno">Vincular aluno</a>
+        </div>
+        <table>
+            <tr><th>Nome</th><th>Nascimento</th><th>Escola</th><th>Série</th><th>Responsável legal</th><th></th></tr>
+            <tbody id="tbody-alunos-projeto"></tbody>
+            {% for vinculo in vinculos %}
+            <tr>
+                <td>{{ vinculo.id_aluno.nome }}</td>
+                <td class="td-muted">{{ vinculo.id_aluno.nascimento }}</td>
+                <td>{{ vinculo.id_aluno.escola }}</td>
+                <td>{{ vinculo.id_aluno.serie }}</td>
+                <td>{{ vinculo.id_aluno.responsabilidadelegal.id_responsavel.nome }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock content %}

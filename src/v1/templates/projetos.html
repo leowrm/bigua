@@ -1,0 +1,61 @@
+{% extends "app.html" %}
+
+{% block content %}
+
+<!-- PROJETOS -->
+<div class="screen active" id="screen-projetos">
+    <div class="page-header">
+        <div class="page-title">Projetos</div>
+        <div class="page-sub">Gestão de projetos com financiamento externo</div>
+    </div>
+    <div class="metrics">
+        <div class="metric-card">
+            <div class="metric-label">Projetos ativos</div>
+            <div class="metric-value" id="metric-proj-ativos">{{ projetos|length }}</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Total captado</div>
+            <div class="metric-value">R$&nbsp; {{ total_capitado|floatformat:2 }}</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Total gasto</div>
+            <div class="metric-value">R$&nbsp; {{ total_gasto|floatformat:2 }}</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Saldo disponível</div>
+            <div class="metric-value">R$&nbsp; {{ saldo_disponivel|floatformat:2 }}</div>
+        </div>
+    </div>
+    <form class="search-row" action="{% url 'projetos-filtro' %}" method="post"> {% csrf_token %}
+        <input class="form-input search-input" placeholder="Buscar projeto por nome ou doador..." name="busca" />
+        <input class="btn btn-ghost" type="submit" value="Buscar" />
+        <a class="btn btn-primary" href="{% url 'novo-projeto' %}">Novo projeto</a>
+    </form>
+    <div class="card">
+        <table>
+        <tr><th>Projeto</th><th>Doador</th><th>Tipo</th><th>Responsável</th><th>Valor total</th><th>Progresso</th><th>Estado</th><th>Detalhes</th></tr>
+        <thead><tbody id="tbody-projetos">
+            {% for projeto in projetos %}
+            <tr>
+                <td><div style="font-size:13px;font-weight:500;">{{ projeto.nome_projeto }}</div><div class="td-muted">Início: {{ projeto.data_inicio }}</div></td>
+                <td class="td-muted">{{ projeto.nome_doador }}</td>
+                <td><span class="badge" style="background:var(--blue-bg);color:var(--blue);">{{ projeto.tipo_doador }}</span></td>
+                <td class="td-muted">{{ projeto.responsavel }}</td>
+                <td>R$ {{ projeto.valor }}</td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="width:60px;height:5px;background:var(--dark3);border-radius:3px;overflow:hidden;">
+                            <div style="width:{{ projeto.percentual|floatformat:0 }}%;height:100%;background:var(--orange);border-radius:3px;"></div>
+                        </div>
+                        <span style="font-size:12px;color:var(--text-muted);">{{ projeto.percentual|floatformat:1 }}%</span>
+                    </div>
+                </td>
+                <td><span class="badge b-ativo">{{ projeto.estado }}</span></td>
+                <td><a class="btn btn-link" href="/v1/projetos/editar/{{ projeto.id_projeto }}">Ver detalhes</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}

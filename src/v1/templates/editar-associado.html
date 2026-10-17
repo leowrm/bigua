@@ -1,0 +1,66 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active" id="screen-cadastro-step1">
+    <div class="page-header">
+        <div class="page-title">Editar associado</div>
+        <div class="page-sub">Dados pessoais</div>
+    </div>
+    <form class="card" style="max-width:640px;" action="{% url 'editar-associado' associado.id_associado %}" method="post"> {% csrf_token %}
+        <div class="card-title" style="margin-bottom:16px;">Dados pessoais</div>
+        <div class="form-grid" style="margin-bottom:14px;">
+            <div class="form-group">
+                <label class="form-label">Nome completo</label>
+                <input class="form-input" id="input-nome-assoc" value="{{ associado.nome}}" placeholder = "Nome" name="nome" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">CPF</label>
+                <input class="form-input" id="input-cpf-assoc" placeholder="{{ associado.cpf }}" name="cpf" disabled/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone (WhatsApp)</label>
+                <input class="form-input" id="input-tel-assoc" value="{{ associado.telefone }}" placeholder="Telefone" name="telefone" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">E-mail</label>
+                <input class="form-input" id="input-email-assoc" value="{{ associado.email }}" placeholder="E-mail" name="email" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Data de nascimento</label>
+                <input class="form-input" id="input-data-nasc-assoc" value="{{ associado.nascimento|date:'Y-m-d' }}" type="date" name="nascimento" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Dia da cobrança</label>
+                <input class="form-input" id="input-dia-cob-assoc" value="{{ associado.dia_cobranca }}" type="number" name="dia_cobranca" min="1" max="29" step="1"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Responsável financeiro</label>
+                <div>
+                    <input class="form-input" id="input-resp-nome" placeholder="{{ responsavel.nome }}" name="resp_nome" disabled/>
+                    <a class="btn btn-link" style="padding-left: 10px;" href="{% url 'editar-responsavel-financeiro' id_associado=associado.id_associado id_responsavel=responsavel.id_associado %}">Editar</a>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Plano</label>
+                <div>
+                    <input class="form-input" id="input-plano-nome" placeholder="{{ associado.id_planos }}" name="plano_nome" disabled/>
+                    <a class="btn btn-link" style="padding-left: 10px;" href="/v1/associado/editar/{{ associado.id_associado }}/plano/{{ plano.id_plano }}">Editar</a>
+                </div>
+            </div>
+        </div>
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}" style="margin-bottom:12px;">{{ message }}</div>
+        {% endfor %}
+        <div class="actions">
+            <input type="submit" class="btn btn-primary" value="Concluir" />
+            <a href="{% url 'associados' %}" class="btn btn-ghost">Cancelar</a>
+            {% if associado.estado == 'Ativo' %}
+            <a href="{% url 'confirmar-inativacao' id_associado=associado.id_associado %}" class="btn btn-danger" style="margin-left: auto;">Inativar</a>
+            {% else %}
+            <a href="{% url 'confirmar-reativacao' id_associado=associado.id_associado %}" class="btn btn-danger" style="margin-left: auto;">Reativar</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

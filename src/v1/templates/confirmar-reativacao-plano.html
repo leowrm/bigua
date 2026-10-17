@@ -1,0 +1,21 @@
+{% extends "app.html" %}
+
+{% block content %}
+<div class="screen active">
+    <div class="card" style="max-width:480px;margin:60px auto;">
+        <div class="card-header">
+            <div class="card-title">Confirmar reativação</div>
+        </div>
+        <p style="margin:16px 0;">
+            Tem certeza que deseja reativar o plano <strong>{{ plano.nome_plano }}</strong>?
+            Ele aparecerá novamente na lista de planos ativos.
+        </p>
+        <div style="display:flex;gap:8px;">
+            <form method="POST"> {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Sim, reativar</button>
+            </form>
+            <a href="{% url 'planos' %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
