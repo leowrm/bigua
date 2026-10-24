@@ -13,6 +13,7 @@ Sistema web de gestão de associados e cobranças de mensalidades para a associa
 **Manual:**
 ```bash
 cd src
+copy .env.example .env   # Windows; no Linux/macOS: cp .env.example .env
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
