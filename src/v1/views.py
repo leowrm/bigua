@@ -250,7 +250,7 @@ def novoAssociado(request):
         if not nome or re.search(r'^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$', nome) is None:
             erros["nome"] = "Informe um nome válido."
         if not cpf or not buiga_utils.cpf_valido(cpf):
-            erros["cpf"] = "Informe um CPF válido."
+            erros["cpf"] = "CPF inválido."
         else:
             cpf = "".join(filter(str.isdigit, cpf))
         if not telefone or len("".join(filter(str.isdigit, telefone))) != 11:
