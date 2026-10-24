@@ -11,43 +11,41 @@
         <div class="form-grid" style="margin-bottom:14px;">
             <div class="form-group">
                 <label class="form-label">Nome do plano</label>
-                <input class="form-input" id="input-nome-plano" placeholder="Nome do plano" name="nome" />
+                <input class="form-input{% if 'nome' in invalid_fields %} input-error{% endif %}" id="input-nome-plano" placeholder="Nome do plano" name="nome" value="{{ form_data.nome|default:'' }}" {% if 'nome' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'nome' in invalid_fields %}<div class="field-error">{{ form_errors.nome }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">Valor</label>
-                <input class="form-input" type="number" id="input-valor-plano" placeholder="Valor do plano" name="valor" />
+                <input class="form-input{% if 'valor' in invalid_fields %} input-error{% endif %}" type="number" id="input-valor-plano" placeholder="Valor do plano" name="valor" value="{{ form_data.valor|default:'' }}" {% if 'valor' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'valor' in invalid_fields %}<div class="field-error">{{ form_errors.valor }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">Formas de pagamento</label>
                 <label class="checkbox plan-card">
-                    <input type="checkbox" value="True" name="Dinheiro" checked> Dinheiro
+                    <input type="checkbox" value="True" name="Dinheiro" {% if not form_data %}checked{% elif form_data.Dinheiro %}checked{% endif %}> Dinheiro
                 </label>
                 <label class="checkbox plan-card">
-                    <input type="checkbox" value="True" name="Pix" checked> Pix
+                    <input type="checkbox" value="True" name="Pix" {% if not form_data %}checked{% elif form_data.Pix %}checked{% endif %}> Pix
+                {% if 'pagamento' in invalid_fields %}<div class="field-error">{{ form_errors.pagamento }}</div>{% endif %}
                 </label>
             </div>
             <div class="form-group" style="margin-bottom: 16px;">
                 <div class="form-group">
                     <label class="form-label">Meses cobrados antecipadamente</label>
-                    <input class="form-input" type="number" id="input-meses-antecipados" placeholder="0" name="meses_antecipados" />
+                    <input class="form-input{% if 'meses_antecipados' in invalid_fields %} input-error{% endif %}" type="number" id="input-meses-antecipados" placeholder="0" name="meses_antecipados" value="{{ form_data.meses_antecipados|default:'' }}" {% if 'meses_antecipados' in invalid_fields %}autofocus{% endif %}/>
+                    {% if 'meses_antecipados' in invalid_fields %}<div class="field-error">{{ form_errors.meses_antecipados }}</div>{% endif %}
                 </div>
                 <div class="form-group">
                     <label class="form-label">Regime de cobrança</label>
-                    <select class="form-input" id="input-regime-cobranca" name="regime_cobranca">
-                        <option value="mensal">Mensal</option>
-                        <option value="trimestral">Trimestral</option>
-                        <option value="semestral">Semestral</option>
-                        <option value="anual">Anual</option>
+                    <select class="form-input{% if 'regime_cobranca' in invalid_fields %} input-error{% endif %}" id="input-regime-cobranca" name="regime_cobranca">
+                        <option value="mensal" {% if form_data.regime_cobranca == 'mensal' or not form_data.regime_cobranca %}selected{% endif %}>Mensal</option>
+                        <option value="trimestral" {% if form_data.regime_cobranca == 'trimestral' %}selected{% endif %}>Trimestral</option>
+                        <option value="semestral" {% if form_data.regime_cobranca == 'semestral' %}selected{% endif %}>Semestral</option>
+                        <option value="anual" {% if form_data.regime_cobranca == 'anual' %}selected{% endif %}>Anual</option>
                     </select>
+                    {% if 'regime_cobranca' in invalid_fields %}<div class="field-error">{{ form_errors.regime_cobranca }}</div>{% endif %}
                 </div>
             </div>
-        </div>
-        <div>
-            <label class="form-label">
-                {% for message in messages %}
-                    <div class="alert alert-error">{{ message }}</div>
-                {% endfor %}
-            </label>
         </div>
         <div class="actions">
             <input type="submit" class="btn btn-primary" value="Criar plano" />

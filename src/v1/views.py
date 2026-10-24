@@ -15,6 +15,36 @@ import datetime
 import re
 
 
+def _form_data(request, fields):
+    return {field: request.POST.get(field, "") for field in fields}
+
+
+def _render_form_error(request, template, form_data, message, field=None, extra=None):
+    context = {
+        "form_data": form_data,
+        "invalid_field": field,
+        "invalid_fields": [field] if field else [],
+        "form_errors": {field: message} if field else {},
+        "field_error": message,
+    }
+    if extra:
+        context.update(extra)
+    return render(request, template, context)
+
+
+def _render_form_errors(request, template, form_data, errors, extra=None):
+    context = {
+        "form_data": form_data,
+        "invalid_field": next(iter(errors), None),
+        "invalid_fields": list(errors),
+        "form_errors": errors,
+        "field_error": next(iter(errors.values()), ""),
+    }
+    if extra:
+        context.update(extra)
+    return render(request, template, context)
+
+
 # Create your views here.
 def index(request):
     return redirect("login")
@@ -199,6 +229,9 @@ def novoAssociado(request):
             return render(request, "novo-associado.html", {
                 "form_data": form_data,
                 "invalid_field": campo,
+                "invalid_fields": [campo] if campo else [],
+                "form_errors": {campo: mensagem} if campo else {},
+                "field_error": mensagem,
             })
 
         if Planos.objects.count() == 0:
@@ -212,25 +245,34 @@ def novoAssociado(request):
                 estado=True
             ).save()
 
-        #Validações
+        # Validações: acumula todos os erros para sinalizar os campos de uma vez.
+        erros = {}
         if not nome or re.search(r'^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$', nome) is None:
-            return erro_formulario("Nome inválido", "nome")
+            erros["nome"] = "Informe um nome válido."
         if not cpf or not buiga_utils.cpf_valido(cpf):
-            return erro_formulario("CPF inválido.", "cpf")
+            erros["cpf"] = "Informe um CPF válido."
         else:
             cpf = "".join(filter(str.isdigit, cpf))
-        if not telefone or len(telefone) != 11:
-            return erro_formulario("Telefone precisa ter 11 dígitos.", "telefone")
+        if not telefone or len("".join(filter(str.isdigit, telefone))) != 11:
+            erros["telefone"] = "O telefone precisa ter 11 dígitos."
         if not email or re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email) is None:
-            return erro_formulario("Email inválido.", "email")
-        if Associado.objects.filter(cpf=cpf).exists():
-            return erro_formulario("CPF já cadastrado.", "cpf")
+            erros["email"] = "Informe um e-mail válido."
+        if cpf and Associado.objects.filter(cpf=cpf).exists():
+            erros["cpf"] = "CPF já cadastrado."
         if not nascimento or not buiga_utils.validar_data(nascimento):
-            return erro_formulario("Data inválida", "nascimento")
-        if not nome or not cpf or not telefone or not email or not nascimento or not dia_cobranca:
-            return erro_formulario("Todos os campos são obrigatórios.")
-        if datetime.datetime.strptime(nascimento, "%Y-%m-%d").date() > datetime.date.today():
-            return erro_formulario("Data de nascimento não pode ser no futuro", "nascimento")
+            erros["nascimento"] = "Informe uma data válida."
+        elif datetime.datetime.strptime(nascimento, "%Y-%m-%d").date() > datetime.date.today():
+            erros["nascimento"] = "A data de nascimento não pode ser futura."
+        if not dia_cobranca:
+            erros["dia_cobranca"] = "Informe o dia da cobrança."
+        else:
+            try:
+                if not 1 <= int(dia_cobranca) <= 29:
+                    erros["dia_cobranca"] = "Informe um dia entre 1 e 29."
+            except (TypeError, ValueError):
+                erros["dia_cobranca"] = "Informe um dia entre 1 e 29."
+        if erros:
+            return _render_form_errors(request, "novo-associado.html", form_data, erros)
         
         associado = Associado.objects.create(
             nome=nome,
@@ -624,38 +666,40 @@ def novoPlano(request):
         aceita_dinheiro = request.POST.get("Dinheiro") == "True"
         aceita_pix = request.POST.get("Pix") == "True"
         regime_cobranca = request.POST.get("regime_cobranca")
-
-        if bool(re.search(r'[^\w\s]', nome_plano, re.UNICODE)):
-            messages.error(request, "Nome do plano inválido")
-            return redirect("novo-plano")
+        form_data = _form_data(request, ["nome", "valor", "meses_antecipados", "regime_cobranca", "Dinheiro", "Pix"])
+        erros = {}
+        if nome_plano and bool(re.search(r'[^\w\s]', nome_plano, re.UNICODE)):
+            erros["nome"] = "Informe um nome sem caracteres especiais."
         if not nome_plano:
-            messages.error(request, "O campo 'Nome do plano' é obrigatório.")
-            return redirect("novo-plano")
+            erros["nome"] = "Informe o nome do plano."
         if Planos.objects.filter(nome_plano=nome_plano).exists():
-            messages.error(request, "Plano com mesmo nome já existe")
-            return redirect("novo-plano")
+            erros["nome"] = "Já existe um plano com esse nome."
         if not valor:
-            messages.error(request, "O campo 'Valor' é obrigatório.")
-            return redirect("novo-plano")
+            erros["valor"] = "Informe o valor do plano."
         if not meses_antecipados:
-            messages.error(request, "O campo 'Meses antecipados' é obrigatório.")
-            return redirect("novo-plano")
+            erros["meses_antecipados"] = "Informe a quantidade de meses."
         if not aceita_dinheiro:
             aceita_dinheiro = False
         if not aceita_pix:
             aceita_pix = False
         if aceita_dinheiro == False and aceita_pix == False:
-            messages.error(request, "O plano deve aceitar pelo menos uma forma de pagamento.")
-            return redirect("novo-plano")
+            erros["pagamento"] = "Selecione pelo menos uma forma de pagamento."
         if not regime_cobranca:
-            messages.error(request, "O campo 'Regime de cobrança' é obrigatório.")
-            return redirect("novo-plano")
-        if int(meses_antecipados) < 0:
-            messages.error(request, "O campo 'Meses antecipados' deve ser positivo.")
-            return redirect("novo-plano")
-        if int(valor) < 0:
-            messages.error(request, "O campo 'Valor' deve ser positivo.")
-            return redirect("novo-plano")
+            erros["regime_cobranca"] = "Selecione o regime de cobrança."
+        if meses_antecipados:
+            try:
+                if int(meses_antecipados) < 0:
+                    erros["meses_antecipados"] = "Informe zero ou mais meses."
+            except ValueError:
+                erros["meses_antecipados"] = "Informe uma quantidade válida."
+        if valor:
+            try:
+                if int(valor) < 0:
+                    erros["valor"] = "O valor deve ser positivo."
+            except ValueError:
+                erros["valor"] = "Informe um valor válido."
+        if erros:
+            return _render_form_errors(request, "novo-plano.html", form_data, erros)
 
         Planos.objects.create(
             nome_plano=nome_plano,
@@ -770,18 +814,27 @@ def novoBem(request):
         valor = request.POST.get("valor")
         estado = request.POST.get("estado")
         data_aquisicao = request.POST.get("data")
-        
-        if bool(re.search(r'[^\w\s]', nome_patrimonio, re.UNICODE)):
-            messages.error(request, "Nome do patrimonio inválido")
-        if not nome_patrimonio or not descricao or not valor or not estado or not data_aquisicao:
-            messages.error(request, "Todos os campos são obrigatórios")
-            return redirect("novo-bem")
-        if datetime.datetime.strptime(data_aquisicao, "%Y-%m-%d").date() > datetime.date.today():
-            messages.error(request, "Data de aquisição não pode ser no futuro")
-            return redirect("novo-bem")
-        if float(valor) < 0:
-            messages.error(request, "O campo 'Valor' deve ser positivo.")
-            return redirect("novo-bem")
+        form_data = _form_data(request, ["nome", "descricao", "valor", "estado", "data"])
+        erros = {}
+        if nome_patrimonio and bool(re.search(r'[^\w\s]', nome_patrimonio, re.UNICODE)):
+            erros["nome"] = "Informe um nome sem caracteres especiais."
+        for campo in ["nome", "descricao", "valor", "estado", "data"]:
+            if not form_data[campo]:
+                erros[campo] = "Preencha este campo."
+        if data_aquisicao:
+            try:
+                if datetime.datetime.strptime(data_aquisicao, "%Y-%m-%d").date() > datetime.date.today():
+                    erros["data"] = "A data não pode ser futura."
+            except ValueError:
+                erros["data"] = "Informe uma data válida."
+        if valor:
+            try:
+                if float(valor) < 0:
+                    erros["valor"] = "O valor deve ser positivo."
+            except ValueError:
+                erros["valor"] = "Informe um valor válido."
+        if erros:
+            return _render_form_errors(request, "novo-bem.html", form_data, erros)
 
         bem = Patrimonio.objects.create(
             nome_patrimonio=nome_patrimonio,
@@ -920,16 +973,22 @@ def novoProjeto(request):
         responsavel = request.POST.get("responsavel")
         data_inicio = request.POST.get("data_inicio")
         data_fim = request.POST.get("data_fim")
-        
+        form_data = _form_data(request, ["nome", "descricao", "valor_total", "tipo_doador", "doador", "responsavel", "data_inicio", "data_fim"])
+        erros = {}
         if not nome_projeto or not descricao or not valor_total or not tipo_doador or not nome_doador or not responsavel or not data_inicio or not data_fim:
-            messages.error(request, "Todos os campos são obrigatórios.")
-            return redirect("novo-projeto")
-        if data_inicio > data_fim:
-            messages.error(request, "A data de início não pode ser maior que a data de fim.")
-            return redirect("novo-projeto")
-        if float(valor_total) < 0:
-            messages.error(request, "O valor total do projeto não pode ser negativo.")
-            return redirect("novo-projeto")
+            for campo in ["nome", "descricao", "valor_total", "tipo_doador", "doador", "responsavel", "data_inicio", "data_fim"]:
+                if not form_data[campo]:
+                    erros[campo] = "Preencha este campo."
+        if data_inicio and data_fim and data_inicio > data_fim:
+            erros["data_inicio"] = "A data de início deve ser anterior à data de encerramento."
+        if valor_total:
+            try:
+                if float(valor_total) < 0:
+                    erros["valor_total"] = "O valor deve ser positivo."
+            except ValueError:
+                erros["valor_total"] = "Informe um valor válido."
+        if erros:
+            return _render_form_errors(request, "novo-projeto.html", form_data, erros)
         
         projeto = Projeto.objects.create(
             nome_projeto=nome_projeto,
@@ -1040,22 +1099,22 @@ def novoAluno(request):
         cpf = request.POST.get("cpf")
         escola = request.POST.get("escola")
         serie = request.POST.get("serie")
-    
+        form_data = _form_data(request, ["nome", "nascimento", "cpf", "escola", "serie"])
+        erros = {}
         if not nome:
-            messages.error(request, "Nome é obrigatório.")
-            return redirect("novo-aluno")
-        if not buiga_utils.validar_data(nascimento):
-            messages.error(request, "Data inválida")
-            return redirect("novo-aluno")
+            erros["nome"] = "Informe o nome do aluno."
         if not nascimento:
-            messages.error(request, "Data de nascimento é obrigatória.")
-            return redirect("novo-aluno")
+            erros["nascimento"] = "Informe a data de nascimento."
+        elif not buiga_utils.validar_data(nascimento):
+            erros["nascimento"] = "Informe uma data válida."
         if cpf and Alunos.objects.filter(cpf=cpf).exists():
-            messages.error(request, "CPF já cadastrado.")
-            return redirect("novo-aluno")
-        if not buiga_utils.cpf_valido(cpf):
-            messages.error(request, "CPF inválido.")
-            return redirect("novo-aluno")
+            erros["cpf"] = "Este CPF já está cadastrado."
+        elif not buiga_utils.cpf_valido(cpf):
+            erros["cpf"] = "Informe um CPF válido."
+        if erros:
+            return _render_form_errors(request, "novo-aluno.html", form_data, erros)
+        if not escola:
+            escola = ""
         else:
             cpf = "".join(filter(str.isdigit, cpf))
 
@@ -1196,18 +1255,29 @@ def novoResponsavelLegal(request):
         telefone = request.POST.get("telefone")
         email = request.POST.get("email")
         endereco = request.POST.get("endereco")
+        form_data = _form_data(request, ["nome", "cpf", "telefone", "email", "endereco"])
+        erros = {}
 
-        if not nome or not cpf or not telefone or not email or not endereco:
-            messages.error(request, "Todos os campos são obrigatórios.")
-            return redirect("novo-responsavel-legal")
-        if not buiga_utils.cpf_valido(cpf):
-            messages.error(request, "CPF inválido.")
-            return redirect("novo-responsavel-legal")
+        if not nome:
+            erros["nome"] = "Informe o nome completo."
+        if not cpf:
+            erros["cpf"] = "Informe o CPF."
+        elif not buiga_utils.cpf_valido(cpf):
+            erros["cpf"] = "Informe um CPF válido."
         else:
             cpf = "".join(filter(str.isdigit, cpf))
-        if len(telefone) != 11:
-            messages.error(request, "Telefone precisa ter 11 dígitos.")
-            return redirect("novo-responsavel-legal") 
+        if not telefone:
+            erros["telefone"] = "Informe o telefone."
+        elif len("".join(filter(str.isdigit, telefone))) != 11:
+            erros["telefone"] = "O telefone precisa ter 11 dígitos."
+        if not email:
+            erros["email"] = "Informe o e-mail."
+        elif re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email) is None:
+            erros["email"] = "Informe um e-mail válido."
+        if not endereco:
+            erros["endereco"] = "Informe o endereço."
+        if erros:
+            return _render_form_errors(request, "novo-responsavel-legal.html", form_data, erros)
 
         ResponsavelLegal.objects.create(
             nome=nome,
@@ -1382,30 +1452,33 @@ def novoUsuario(request):
                 "acessos": usuario_cadastrado.get_all_permissions(),
             })
 
-        def erro_formulario(mensagem):
+        def erro_formulario(mensagem, campo=None):
             messages.error(request, mensagem)
             return render(request, "administracao.html", {
                 "usuarios": usuarios,
                 "form_data": form_data,
                 "selected_permissions": selected_permissions,
+                "invalid_field": campo,
+                "field_error": mensagem,
             })
 
         if User.objects.filter(username=username).exists():
-            return erro_formulario("Nome de usuário já existe")
+            return erro_formulario("Nome de usuário já existe", "username")
         if not username or not first_name or not last_name or not email or not nova_senha:
-            return erro_formulario("Todos os campos são obrigatórios")
+            campo_obrigatorio = next((f for f in ("username", "nome", "email", "senha", "funcao") if not form_data.get(f) and f != "senha"), "senha")
+            return erro_formulario("Preencha este campo.", campo_obrigatorio)
         if re.search(r"[!@#$%^&*(),.?\":{}|<>]", username):
-            return erro_formulario("Não pode conter caracteres especiais no Usuário")
+            return erro_formulario("Não use caracteres especiais no usuário.", "username")
         if re.search(r"[!@#$%^&*(),.?\":{}|<>]", first_name):
-            return erro_formulario("Não pode conter caracteres especiais no nome do usuário")
+            return erro_formulario("Não use caracteres especiais no nome.", "nome")
         if re.search(r"[!@#$%^&*(),.?\":{}|<>]", last_name):
-            return erro_formulario("Não pode conter caracteres especiais na função da ONG")
+            return erro_formulario("Não use caracteres especiais no cargo.", "funcao")
         
         senha_validada = buiga_utils.validar_senha(nova_senha, nova_senha) 
         if senha_validada is True:
             pass
         else:
-            return erro_formulario(senha_validada)
+            return erro_formulario(senha_validada, "senha")
 
         usuario = User.objects.create_user(
             username=username,

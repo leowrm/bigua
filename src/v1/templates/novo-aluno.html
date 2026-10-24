@@ -27,36 +27,40 @@
         <div class="form-grid" style="margin-bottom:14px;">
             <div class="form-group">
                 <label class="form-label">Nome completo</label>
-                <input class="form-input" id="input-aluno-nome" placeholder="Nome do aluno" name="nome"/>
+                <input class="form-input{% if 'nome' in invalid_fields %} input-error{% endif %}" id="input-aluno-nome" placeholder="Nome do aluno" name="nome" value="{{ form_data.nome|default:'' }}" {% if 'nome' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'nome' in invalid_fields %}<div class="field-error">{{ form_errors.nome }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">CPF</label>
-                <input class="form-input" id="input-aluno-cpf" placeholder="000.000.000-00" name="cpf"/>
+                <input class="form-input{% if 'cpf' in invalid_fields %} input-error{% endif %}" id="input-aluno-cpf" placeholder="000.000.000-00" name="cpf" value="{{ form_data.cpf|default:'' }}" {% if 'cpf' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'cpf' in invalid_fields %}<div class="field-error">{{ form_errors.cpf }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">Escola</label>
-                <input class="form-input" id="input-aluno-escola" placeholder="Nome da escola" name="escola"/>
+                <input class="form-input{% if 'escola' in invalid_fields %} input-error{% endif %}" id="input-aluno-escola" placeholder="Nome da escola" name="escola" value="{{ form_data.escola|default:'' }}" {% if 'escola' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'escola' in invalid_fields %}<div class="field-error">{{ form_errors.escola }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">Série</label>
                 <select class="form-input" id="input-aluno-serie" name="serie">
-                    <option>1º ano — Fundamental I</option>
-                    <option>2º ano — Fundamental I</option>
-                    <option>3º ano — Fundamental I</option>
-                    <option>4º ano — Fundamental I</option>
-                    <option>5º ano — Fundamental I</option>
-                    <option>6º ano — Fundamental II</option>
-                    <option>7º ano — Fundamental II</option>
-                    <option>8º ano — Fundamental II</option>
-                    <option>9º ano — Fundamental II</option>
-                    <option>1º ano — Ensino Médio</option>
-                    <option>2º ano — Ensino Médio</option>
-                    <option>3º ano — Ensino Médio</option>
+                    <option value="1º ano — Fundamental I" {% if form_data.serie == '1º ano — Fundamental I' %}selected{% endif %}>1º ano — Fundamental I</option>
+                    <option value="2º ano — Fundamental I" {% if form_data.serie == '2º ano — Fundamental I' %}selected{% endif %}>2º ano — Fundamental I</option>
+                    <option value="3º ano — Fundamental I" {% if form_data.serie == '3º ano — Fundamental I' %}selected{% endif %}>3º ano — Fundamental I</option>
+                    <option value="4º ano — Fundamental I" {% if form_data.serie == '4º ano — Fundamental I' %}selected{% endif %}>4º ano — Fundamental I</option>
+                    <option value="5º ano — Fundamental I" {% if form_data.serie == '5º ano — Fundamental I' %}selected{% endif %}>5º ano — Fundamental I</option>
+                    <option value="6º ano — Fundamental II" {% if form_data.serie == '6º ano — Fundamental II' %}selected{% endif %}>6º ano — Fundamental II</option>
+                    <option value="7º ano — Fundamental II" {% if form_data.serie == '7º ano — Fundamental II' %}selected{% endif %}>7º ano — Fundamental II</option>
+                    <option value="8º ano — Fundamental II" {% if form_data.serie == '8º ano — Fundamental II' %}selected{% endif %}>8º ano — Fundamental II</option>
+                    <option value="9º ano — Fundamental II" {% if form_data.serie == '9º ano — Fundamental II' %}selected{% endif %}>9º ano — Fundamental II</option>
+                    <option value="1º ano — Ensino Médio" {% if form_data.serie == '1º ano — Ensino Médio' %}selected{% endif %}>1º ano — Ensino Médio</option>
+                    <option value="2º ano — Ensino Médio" {% if form_data.serie == '2º ano — Ensino Médio' %}selected{% endif %}>2º ano — Ensino Médio</option>
+                    <option value="3º ano — Ensino Médio" {% if form_data.serie == '3º ano — Ensino Médio' %}selected{% endif %}>3º ano — Ensino Médio</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="form-label">Data de nascimento</label>
-                <input class="form-input" id="input-aluno-nasc" type="date" name="nascimento"/>
+                <input class="form-input{% if 'nascimento' in invalid_fields %} input-error{% endif %}" id="input-aluno-nasc" type="date" name="nascimento" value="{{ form_data.nascimento|default:'' }}" {% if 'nascimento' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'nascimento' in invalid_fields %}<div class="field-error">{{ form_errors.nascimento }}</div>{% endif %}
             </div>
         </div>
         <div class="actions" style="max-width:800px;">
@@ -64,9 +68,6 @@
             <a href="{% url 'alunos' %}" class="btn btn-ghost">Cancelar</a>
         </div>
     </form>
-    {% for message in messages %}
-    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}" style="margin-top:12px;">{{ message }}</div>
-    {% endfor %}
 </div>
 
 {% endblock content %}

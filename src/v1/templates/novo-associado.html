@@ -32,35 +32,34 @@
         <div class="form-grid" style="margin-bottom:14px;">
             <div class="form-group">
                 <label class="form-label">Nome completo</label>
-                <input class="form-input{% if invalid_field == 'nome' %} input-error{% endif %}" id="input-nome-assoc" placeholder="Ex: Ana Silva" name="nome" value="{{ form_data.nome|default:'' }}" {% if invalid_field == 'nome' %}aria-invalid="true" autofocus{% endif %} />
+                <input class="form-input{% if 'nome' in invalid_fields %} input-error{% endif %}" id="input-nome-assoc" placeholder="Ex: Ana Silva" name="nome" value="{{ form_data.nome|default:'' }}" {% if 'nome' in invalid_fields %}aria-invalid="true" autofocus{% endif %} />
+                {% if 'nome' in invalid_fields %}<div class="field-error">{{ form_errors.nome }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">CPF</label>
-                <input class="form-input{% if invalid_field == 'cpf' %} input-error{% endif %}" id="input-cpf-assoc" placeholder="000.000.000-00" name="cpf" value="{{ form_data.cpf|default:'' }}" {% if invalid_field == 'cpf' %}aria-invalid="true" autofocus{% endif %} />
+                <input class="form-input{% if 'cpf' in invalid_fields %} input-error{% endif %}" id="input-cpf-assoc" placeholder="000.000.000-00" name="cpf" value="{{ form_data.cpf|default:'' }}" {% if 'cpf' in invalid_fields %}aria-invalid="true" autofocus{% endif %} />
+                {% if 'cpf' in invalid_fields %}<div class="field-error">{{ form_errors.cpf }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">Telefone (WhatsApp)</label>
-                <input class="form-input{% if invalid_field == 'telefone' %} input-error{% endif %}" id="input-tel-assoc" placeholder="(51) 99999-9999" name="telefone" value="{{ form_data.telefone|default:'' }}" {% if invalid_field == 'telefone' %}aria-invalid="true" autofocus{% endif %} />
+                <input class="form-input{% if 'telefone' in invalid_fields %} input-error{% endif %}" id="input-tel-assoc" placeholder="(51) 99999-9999" name="telefone" value="{{ form_data.telefone|default:'' }}" {% if 'telefone' in invalid_fields %}aria-invalid="true" autofocus{% endif %} />
+                {% if 'telefone' in invalid_fields %}<div class="field-error">{{ form_errors.telefone }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">E-mail</label>
-                <input class="form-input{% if invalid_field == 'email' %} input-error{% endif %}" id="input-email-assoc" placeholder="email@exemplo.com" name="email" value="{{ form_data.email|default:'' }}" {% if invalid_field == 'email' %}aria-invalid="true" autofocus{% endif %} />
+                <input class="form-input{% if 'email' in invalid_fields %} input-error{% endif %}" id="input-email-assoc" placeholder="email@exemplo.com" name="email" value="{{ form_data.email|default:'' }}" {% if 'email' in invalid_fields %}aria-invalid="true" autofocus{% endif %} />
+                {% if 'email' in invalid_fields %}<div class="field-error">{{ form_errors.email }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">Data de nascimento</label>
-                <input class="form-input{% if invalid_field == 'nascimento' %} input-error{% endif %}" id="input-data-nasc-assoc" type="date" name="nascimento" value="{{ form_data.nascimento|default:'' }}" {% if invalid_field == 'nascimento' %}aria-invalid="true" autofocus{% endif %} />
+                <input class="form-input{% if 'nascimento' in invalid_fields %} input-error{% endif %}" id="input-data-nasc-assoc" type="date" name="nascimento" value="{{ form_data.nascimento|default:'' }}" {% if 'nascimento' in invalid_fields %}aria-invalid="true" autofocus{% endif %} />
+                {% if 'nascimento' in invalid_fields %}<div class="field-error">{{ form_errors.nascimento }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">Dia da cobrança</label>
-                <input class="form-input{% if invalid_field == 'dia_cobranca' %} input-error{% endif %}" id="input-dia-cobranca-assoc" type="number" name="dia_cobranca" min="1" max="29" step="1" value="{{ form_data.dia_cobranca|default:'' }}" {% if invalid_field == 'dia_cobranca' %}aria-invalid="true" autofocus{% endif %}/>
+                <input class="form-input{% if 'dia_cobranca' in invalid_fields %} input-error{% endif %}" id="input-dia-cobranca-assoc" type="number" name="dia_cobranca" min="1" max="29" step="1" value="{{ form_data.dia_cobranca|default:'' }}" {% if 'dia_cobranca' in invalid_fields %}aria-invalid="true" autofocus{% endif %}/>
+                {% if 'dia_cobranca' in invalid_fields %}<div class="field-error">{{ form_errors.dia_cobranca }}</div>{% endif %}
             </div>
-        </div>
-        <div>
-            <label class="form-label">
-                {% for message in messages %}
-                    <div class="alert alert-error">{{ message }}</div>
-                {% endfor %}
-            </label>
         </div>
         <div class="actions">
             <input type="submit" class="btn btn-primary" value="Próximo" />

@@ -13,37 +13,35 @@
         <div style="display:flex;flex-direction:column;gap:14px;">
             <div class="form-group">
                 <label class="form-label">Nome do bem</label>
-                <input class="form-input" id="input-pat-nome" placeholder="Nome do bem" name="nome"/>
+                <input class="form-input{% if 'nome' in invalid_fields %} input-error{% endif %}" id="input-pat-nome" placeholder="Nome do bem" name="nome" value="{{ form_data.nome|default:'' }}" {% if 'nome' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'nome' in invalid_fields %}<div class="field-error">{{ form_errors.nome }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">Descrição</label>
-                <textarea class="form-input" id="input-pat-desc" rows="2" placeholder="Descrição do bem, exemplo: material, capacidade, cor, peso..." style="resize:vertical;" name="descricao"></textarea>
+                <textarea class="form-input{% if 'descricao' in invalid_fields %} input-error{% endif %}" id="input-pat-desc" rows="2" placeholder="Descrição do bem, exemplo: material, capacidade, cor, peso..." style="resize:vertical;" name="descricao" {% if 'descricao' in invalid_fields %}autofocus{% endif %}>{{ form_data.descricao|default:'' }}</textarea>
+                {% if 'descricao' in invalid_fields %}<div class="field-error">{{ form_errors.descricao }}</div>{% endif %}
             </div>
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">Estado</label>
-                    <select class="form-input" id="input-pat-estado" name="estado">
-                        <option>Novo</option>
-                        <option>Usado</option>
-                        <option>Recondicionado</option>
+                    <select class="form-input{% if 'estado' in invalid_fields %} input-error{% endif %}" id="input-pat-estado" name="estado">
+                        <option value="Novo" {% if form_data.estado == 'Novo' or not form_data.estado %}selected{% endif %}>Novo</option>
+                        <option value="Usado" {% if form_data.estado == 'Usado' %}selected{% endif %}>Usado</option>
+                        <option value="Recondicionado" {% if form_data.estado == 'Recondicionado' %}selected{% endif %}>Recondicionado</option>
                     </select>
+                    {% if 'estado' in invalid_fields %}<div class="field-error">{{ form_errors.estado }}</div>{% endif %}
                 </div>
                 <div class="form-group">
                     <label class="form-label">Data de aquisição</label>
-                    <input class="form-input" id="input-pat-data" type="date" name="data"/>
+                    <input class="form-input{% if 'data' in invalid_fields %} input-error{% endif %}" id="input-pat-data" type="date" name="data" value="{{ form_data.data|default:'' }}" {% if 'data' in invalid_fields %}autofocus{% endif %}/>
+                    {% if 'data' in invalid_fields %}<div class="field-error">{{ form_errors.data }}</div>{% endif %}
                 </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Valor (R$)</label>
-                <input class="form-input" id="input-pat-valor" type="number" placeholder="R$ 0,00" name="valor" step="0.01"/>
+                <input class="form-input{% if 'valor' in invalid_fields %} input-error{% endif %}" id="input-pat-valor" type="number" placeholder="R$ 0,00" name="valor" step="0.01" value="{{ form_data.valor|default:'' }}" {% if 'valor' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'valor' in invalid_fields %}<div class="field-error">{{ form_errors.valor }}</div>{% endif %}
             </div>
-        </div>
-        <div>
-            <label class="form-label">
-                {% for message in messages %}
-                    <div class="alert alert-error">{{ message }}</div>
-                {% endfor %}
-            </label>
         </div>
         <div class="actions">
             <input type="submit" class="btn btn-primary" value="Registrar bem" />

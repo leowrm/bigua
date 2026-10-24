@@ -13,33 +13,35 @@
         <div class="form-grid" style="margin-bottom:14px;">
             <div class="form-group">
                 <label class="form-label">Nome completo</label>
-                <input class="form-input" id="input-responsavel-nome" placeholder="Nome do responsável" name="nome"/>
+                <input class="form-input{% if 'nome' in invalid_fields %} input-error{% endif %}" id="input-responsavel-nome" placeholder="Nome do responsável" name="nome" value="{{ form_data.nome|default:'' }}" {% if 'nome' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'nome' in invalid_fields %}<div class="field-error">{{ form_errors.nome }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">CPF</label>
-                <input class="form-input" id="input-responsavel-cpf" placeholder="000.000.000-00" name="cpf"/>
+                <input class="form-input{% if 'cpf' in invalid_fields %} input-error{% endif %}" id="input-responsavel-cpf" placeholder="000.000.000-00" name="cpf" value="{{ form_data.cpf|default:'' }}" {% if 'cpf' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'cpf' in invalid_fields %}<div class="field-error">{{ form_errors.cpf }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">Telefone</label>
-                <input class="form-input" id="input-responsavel-telefone" placeholder="(51) 99999-0000" name="telefone"/>
+                <input class="form-input{% if 'telefone' in invalid_fields %} input-error{% endif %}" id="input-responsavel-telefone" placeholder="(51) 99999-0000" name="telefone" value="{{ form_data.telefone|default:'' }}" {% if 'telefone' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'telefone' in invalid_fields %}<div class="field-error">{{ form_errors.telefone }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">E-mail</label>
-                <input class="form-input" id="input-responsavel-email" placeholder="Exemplo@bigua.com.br" name="email"/>
+                <input class="form-input{% if 'email' in invalid_fields %} input-error{% endif %}" id="input-responsavel-email" placeholder="Exemplo@bigua.com.br" name="email" value="{{ form_data.email|default:'' }}" {% if 'email' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'email' in invalid_fields %}<div class="field-error">{{ form_errors.email }}</div>{% endif %}
             </div>
         </div>
         <div class="form-group">
                 <label class="form-label">Endereço</label>
-                <input class="form-input" id="input-responsavel-endereco" placeholder="Endereço do responsável legal" name="endereco"/>
+                <input class="form-input{% if 'endereco' in invalid_fields %} input-error{% endif %}" id="input-responsavel-endereco" placeholder="Endereço do responsável legal" name="endereco" value="{{ form_data.endereco|default:'' }}" {% if 'endereco' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'endereco' in invalid_fields %}<div class="field-error">{{ form_errors.endereco }}</div>{% endif %}
         </div>
         <div class="actions" style="max-width:800px;">
             <input type="submit" class="btn btn-primary" value="Cadastrar responsável">
         <a href="{% url 'responsavel-legal' %}" class="btn btn-ghost">Cancelar</a>
         </div>
     </form>
-    {% for message in messages %}
-    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}" style="margin-top:12px;">{{ message }}</div>
-    {% endfor %}
 </div>
 
 {% endblock content %}

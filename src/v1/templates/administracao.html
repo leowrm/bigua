@@ -62,23 +62,28 @@
                 <div style="display:flex;flex-direction:column;gap:12px;">
                 <div class="form-group">
                     <label class="form-label">Usuário</label>
-                    <input class="form-input" id="input-admin-username" placeholder="Usuário" name="username" value="{{ form_data.username|default:'' }}"/>
+                    <input class="form-input{% if invalid_field == 'username' %} input-error{% endif %}" id="input-admin-username" placeholder="Usuário" name="username" value="{{ form_data.username|default:'' }}" {% if invalid_field == 'username' %}autofocus{% endif %}/>
+                    {% if invalid_field == 'username' %}<div class="field-error">{{ field_error }}</div>{% endif %}
                 </div>
                 <div class="form-group">
                     <label class="form-label">Nome completo</label>
-                    <input class="form-input" id="input-admin-nome" placeholder="Nome completo" name="nome" value="{{ form_data.nome|default:'' }}"/>
+                    <input class="form-input{% if invalid_field == 'nome' %} input-error{% endif %}" id="input-admin-nome" placeholder="Nome completo" name="nome" value="{{ form_data.nome|default:'' }}" {% if invalid_field == 'nome' %}autofocus{% endif %}/>
+                    {% if invalid_field == 'nome' %}<div class="field-error">{{ field_error }}</div>{% endif %}
                 </div>
                 <div class="form-group">
                     <label class="form-label">E-mail</label>
-                    <input class="form-input" id="input-admin-email" type="email" placeholder="Email" name="email" value="{{ form_data.email|default:'' }}"/>
+                    <input class="form-input{% if invalid_field == 'email' %} input-error{% endif %}" id="input-admin-email" type="email" placeholder="Email" name="email" value="{{ form_data.email|default:'' }}" {% if invalid_field == 'email' %}autofocus{% endif %}/>
+                    {% if invalid_field == 'email' %}<div class="field-error">{{ field_error }}</div>{% endif %}
                 </div>
                 <div class="form-group">
                     <label class="form-label">Senha</label>
-                    <input class="form-input" id="input-admin-senha" type="password" placeholder="Senha" name="senha"/>
+                    <input class="form-input{% if invalid_field == 'senha' %} input-error{% endif %}" id="input-admin-senha" type="password" placeholder="Senha" name="senha" {% if invalid_field == 'senha' %}autofocus{% endif %}/>
+                    {% if invalid_field == 'senha' %}<div class="field-error">{{ field_error }}</div>{% endif %}
                 </div>
                 <div class="form-group">
                     <label class="form-label">Cargo na ONG</label>
-                    <input class="form-input" id="input-admin-funcao" placeholder="Cargo" name="funcao" value="{{ form_data.funcao|default:'' }}"/>
+                    <input class="form-input{% if invalid_field == 'funcao' %} input-error{% endif %}" id="input-admin-funcao" placeholder="Cargo" name="funcao" value="{{ form_data.funcao|default:'' }}" {% if invalid_field == 'funcao' %}autofocus{% endif %}/>
+                    {% if invalid_field == 'funcao' %}<div class="field-error">{{ field_error }}</div>{% endif %}
                 </div>
                 <div class="form-group">
                     <label class="form-label">Seções liberadas</label>

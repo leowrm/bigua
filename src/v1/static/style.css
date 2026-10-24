@@ -134,6 +134,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .form-input { padding: 9px 12px; background: var(--dark3); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 13px; outline: none; transition: border 0.15s; }
 .form-input:focus { border-color: var(--orange); }
 .form-input.input-error { border-color: #dc2626; box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.14); }
+.field-error { color: #dc2626; font-size: 11px; margin-top: 4px; }
 .form-input::placeholder { color: var(--text-dim); }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 

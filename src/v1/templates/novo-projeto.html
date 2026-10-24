@@ -12,51 +12,51 @@
         <div style="display:flex;flex-direction:column;gap:14px;">
             <div class="form-group">
                 <label class="form-label">Nome do projeto</label>
-                <input class="form-input" id="input-proj-nome" placeholder="Nome do projeto" name="nome"/>
+                <input class="form-input{% if 'nome' in invalid_fields %} input-error{% endif %}" id="input-proj-nome" placeholder="Nome do projeto" name="nome" value="{{ form_data.nome|default:'' }}" {% if 'nome' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'nome' in invalid_fields %}<div class="field-error">{{ form_errors.nome }}</div>{% endif %}
             </div>
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">Tipo de doador</label>
                     <select class="form-input" id="input-proj-tipo" name="tipo_doador">
-                        <option>Estatal</option>
-                        <option>Privada</option>
-                        <option>Mista</option>
+                        <option value="Estatal" {% if form_data.tipo_doador == 'Estatal' or not form_data.tipo_doador %}selected{% endif %}>Estatal</option>
+                        <option value="Privada" {% if form_data.tipo_doador == 'Privada' %}selected{% endif %}>Privada</option>
+                        <option value="Mista" {% if form_data.tipo_doador == 'Mista' %}selected{% endif %}>Mista</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Nome do doador</label>
-                    <input class="form-input" id="input-proj-doador" placeholder="Nome do doador" name="doador" />
+                    <input class="form-input{% if 'doador' in invalid_fields %} input-error{% endif %}" id="input-proj-doador" placeholder="Nome do doador" name="doador" value="{{ form_data.doador|default:'' }}" {% if 'doador' in invalid_fields %}autofocus{% endif %}/>
+                    {% if 'doador' in invalid_fields %}<div class="field-error">{{ form_errors.doador }}</div>{% endif %}
                 </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Responsável pelo projeto</label>
-                <input class="form-input" id="input-proj-resp" placeholder="Responsável pelo projeto" name="responsavel" />
+                <input class="form-input{% if 'responsavel' in invalid_fields %} input-error{% endif %}" id="input-proj-resp" placeholder="Responsável pelo projeto" name="responsavel" value="{{ form_data.responsavel|default:'' }}" {% if 'responsavel' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'responsavel' in invalid_fields %}<div class="field-error">{{ form_errors.responsavel }}</div>{% endif %}
             </div>
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">Valor total (R$)</label>
-                    <input class="form-input" id="input-proj-valor" type="number" placeholder="R$ 0,00" step="0.01" name="valor_total" />
+                    <input class="form-input{% if 'valor_total' in invalid_fields %} input-error{% endif %}" id="input-proj-valor" type="number" placeholder="R$ 0,00" step="0.01" name="valor_total" value="{{ form_data.valor_total|default:'' }}" {% if 'valor_total' in invalid_fields %}autofocus{% endif %}/>
+                    {% if 'valor_total' in invalid_fields %}<div class="field-error">{{ form_errors.valor_total }}</div>{% endif %}
                 </div>
                 <div class="form-group">
                     <label class="form-label">Data de início</label>
-                    <input class="form-input" type="date" name="data_inicio" />
+                <input class="form-input{% if 'data_inicio' in invalid_fields %} input-error{% endif %}" type="date" name="data_inicio" value="{{ form_data.data_inicio|default:'' }}" {% if 'data_inicio' in invalid_fields %}autofocus{% endif %}/>
+                {% if 'data_inicio' in invalid_fields %}<div class="field-error">{{ form_errors.data_inicio }}</div>{% endif %}
                 </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Data de encerramento prevista</label>
-                <input class="form-input" type="date" name="data_fim" />
+            <input class="form-input{% if 'data_fim' in invalid_fields %} input-error{% endif %}" type="date" name="data_fim" value="{{ form_data.data_fim|default:'' }}" {% if 'data_fim' in invalid_fields %}autofocus{% endif %}/>
+            {% if 'data_fim' in invalid_fields %}<div class="field-error">{{ form_errors.data_fim }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label class="form-label">Descrição</label>
-                <textarea class="form-input" rows="3" placeholder="Descreva o objetivo do projeto..." style="resize:vertical;" name="descricao"></textarea>
+            <textarea class="form-input{% if 'descricao' in invalid_fields %} input-error{% endif %}" rows="3" placeholder="Descreva o objetivo do projeto..." style="resize:vertical;" name="descricao" {% if 'descricao' in invalid_fields %}autofocus{% endif %}>{{ form_data.descricao|default:'' }}</textarea>
+            {% if 'descricao' in invalid_fields %}<div class="field-error">{{ form_errors.descricao }}</div>{% endif %}
             </div>
-        </div>
-        <div>
-            <label class="form-label">
-                {% for message in messages %}
-                    <div class="alert alert-error">{{ message }}</div>
-                {% endfor %}
-            </label>
         </div>
         <div class="actions">
             <input type="submit" class="btn btn-primary" value="Criar projeto" />
