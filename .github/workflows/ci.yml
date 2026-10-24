@@ -30,7 +30,9 @@ jobs:
       - name: Verificar configuração de produção
         run: python manage.py check --deploy
       - name: Verificar migrações
-        run: python manage.py migrate --check --noinput
+        run: python manage.py makemigrations --check --dry-run
+      - name: Aplicar migrações no banco de CI
+        run: python manage.py migrate --noinput
       - name: Coletar arquivos estáticos
         run: python manage.py collectstatic --noinput
       - name: Rodar testes
