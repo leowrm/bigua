@@ -22,10 +22,12 @@
         </div>
         <div class="sidebar-nav">
           <div class="nav-section">Principal</div>
+          {% if user.is_staff %}
           <a class="nav-item" id="nav-dashboard" href="{% url 'dashboard' %}">
             <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.5"/></svg>
             Dashboard
           </a>
+          {% endif %}
           {% if perms.v1.view_associado %}
           <a class="nav-item" id="nav-associados" href="{% url 'associados' %}">
             <svg viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="3" fill="currentColor"/><path d="M1 13C1 10.2 3.2 8 6 8H7C9.8 8 12 10.2 12 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="5" r="2.5" fill="currentColor" opacity="0.5"/><path d="M13 8.5C14.7 8.9 16 10.3 16 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></svg>

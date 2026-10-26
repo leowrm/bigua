@@ -105,9 +105,24 @@ def registerPanel(request):
 
 @login_required(login_url="/v1/login/")
 def app(request):
-    return redirect("dashboard")
+    if request.user.is_staff:
+        return redirect("dashboard")
+    if request.user.has_perm("v1.view_associado"):
+        return redirect("associados")
+    if request.user.has_perm("v1.view_planos"):
+        return redirect("planos")
+    if request.user.has_perm("v1.view_mensalidades"):
+        return redirect("cobrancas")
+    if request.user.has_perm("v1.view_patrimonio"):
+        return redirect("patrimonio")
+    if request.user.has_perm("v1.view_projeto"):
+        return redirect("projetos")
+    if request.user.has_perm("whatsapp.view_configuracaowhatsapp"):
+        return redirect("whatsapp-configuracao")
+    return redirect("usuario")
 
 @login_required(login_url="/v1/login/")
+@user_passes_test(lambda u: u.is_staff, login_url="/v1/app/")
 def dashboardPanel(request):
     receitas_mes = Mensalidades.objects.filter(
             vencimento__year=datetime.datetime.now().year,
@@ -1434,7 +1449,8 @@ def novoUsuario(request):
         first_name = request.POST.get("nome")
         last_name = request.POST.get("funcao")
         email = request.POST.get("email")
-        nova_senha = request.POST.get("senha")
+        nova_senha = request.POST.get("senha") or ""
+        confirm_senha = request.POST.get("confirm_senha") or ""
         selected_permissions = [request.POST.get(nome) for nome in (
             "associados", "planos", "mensalidades", "patrimonio", "projetos", "whatsapp", "administracao"
         ) if request.POST.get(nome)]
@@ -1464,8 +1480,18 @@ def novoUsuario(request):
 
         if User.objects.filter(username=username).exists():
             return erro_formulario("Nome de usuário já existe", "username")
-        if not username or not first_name or not last_name or not email or not nova_senha:
-            campo_obrigatorio = next((f for f in ("username", "nome", "email", "senha", "funcao") if not form_data.get(f) and f != "senha"), "senha")
+        if not username or not first_name or not last_name or not email or not nova_senha or not confirm_senha:
+            campo_obrigatorio = next(
+                (f for f, value in (
+                    ("username", username),
+                    ("nome", first_name),
+                    ("email", email),
+                    ("funcao", last_name),
+                    ("senha", nova_senha),
+                    ("confirm_senha", confirm_senha),
+                ) if not value),
+                "senha",
+            )
             return erro_formulario("Preencha este campo.", campo_obrigatorio)
         if re.search(r"[!@#$%^&*(),.?\":{}|<>]", username):
             return erro_formulario("Não use caracteres especiais no usuário.", "username")
@@ -1474,11 +1500,22 @@ def novoUsuario(request):
         if re.search(r"[!@#$%^&*(),.?\":{}|<>]", last_name):
             return erro_formulario("Não use caracteres especiais no cargo.", "funcao")
         
-        senha_validada = buiga_utils.validar_senha(nova_senha, nova_senha) 
-        if senha_validada is True:
-            pass
-        else:
-            return erro_formulario(senha_validada, "senha")
+        senha_validada = buiga_utils.validar_senha(nova_senha, confirm_senha)
+        if senha_validada is not True:
+            campo_senha = "confirm_senha" if nova_senha != confirm_senha else "senha"
+            return erro_formulario(senha_validada, campo_senha)
+
+        permissoes = []
+        for acesso in selected_permissions:
+            if acesso == "True":
+                continue
+            app_label = "whatsapp" if acesso == "view_configuracaowhatsapp" else "v1"
+            permissao = Permission.objects.filter(
+                content_type__app_label=app_label,
+                codename=acesso,
+            ).first()
+            if permissao:
+                permissoes.append(permissao)
 
         usuario = User.objects.create_user(
             username=username,
@@ -1487,13 +1524,7 @@ def novoUsuario(request):
             email=email,
             password=nova_senha
         )
-        for acesso in selected_permissions:
-            if acesso == "True":
-                continue
-            app_label = "whatsapp" if acesso == "view_configuracaowhatsapp" else "v1"
-            permissao = Permission.objects.filter(app_label=app_label, codename=acesso).first()
-            if permissao:
-                usuario.user_permissions.add(permissao)
+        usuario.user_permissions.add(*permissoes)
 
         usuario.is_staff = request.POST.get("administracao") == "True"
 
