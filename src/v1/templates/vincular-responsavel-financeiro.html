@@ -52,9 +52,12 @@
             </div>
             <div class="actions" style="margin-top:16px;">
                 <input type="submit" class="btn btn-primary" value="Próximo" />
-                <a href="{% url 'excluir-associado' id_associado=associado.id_associado %}" class="btn btn-ghost"> {% csrf_token %} Cancelar</a>
+                </form>
+                <form method="post" action="{% url 'excluir-associado' id_associado=associado.id_associado %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-ghost">Cancelar</button>
+                </form>
             </div>
-        </form>
     </div>
 </div>
 {% endblock content %}

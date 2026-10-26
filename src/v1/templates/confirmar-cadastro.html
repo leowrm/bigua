@@ -74,7 +74,7 @@
         <form method="post" action="{% url 'confirmar-cadastro' id_associado=associado.id_associado %}"> {% csrf_token %}
             <div class="actions" style="margin-top:24px;">
                 <button type="submit" name="acao" value="confirmar" class="btn btn-primary">Confirmar cadastro</button>
-                <a href="{% url 'excluir-associado' id_associado=associado.id_associado %}" class="btn btn-ghost">{% csrf_token %} Cancelar</a> 
+                <button type="submit" formaction="{% url 'excluir-associado' id_associado=associado.id_associado %}" formmethod="post" class="btn btn-ghost">Cancelar</button>
             </div>
         </form>
     </div>

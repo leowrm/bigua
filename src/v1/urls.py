@@ -9,7 +9,6 @@ urlpatterns = [
     #Acesso
     path("login/", views.loginPanel, name="login"),
     path("logout/", views.logoutPanel, name="logout"),
-    path("cadastro/", views.registerPanel, name="cadastro"),
     path("usuario/", views.usuario, name="usuario"),
     path("usuario/alterar-senha/", views.alterarSenha, name="alterar-senha"),
 

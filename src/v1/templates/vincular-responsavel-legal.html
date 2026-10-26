@@ -47,7 +47,7 @@
             </div>
             <div class="actions" style="margin-top:16px;">
                 <input type="submit" class="btn btn-primary" value="Próximo" />
-                <a href="{% url 'excluir-aluno' id_aluno=aluno.id_aluno %}" class="btn btn-ghost"> {% csrf_token %} Cancelar</a>
+                <button type="submit" formaction="{% url 'excluir-aluno' id_aluno=aluno.id_aluno %}" formmethod="post" class="btn btn-ghost">Cancelar</button>
             </div>
         </form>
     </div>

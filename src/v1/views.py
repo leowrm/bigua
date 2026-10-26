@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -80,28 +81,6 @@ def loginPanel(request):
 def logoutPanel(request):
     logout(request)
     return redirect("login")
-
-@login_required(login_url="/v1/login/")
-@user_passes_test(lambda u: u.is_staff, login_url="/v1/app/")
-def registerPanel(request):
-    if request.method == "GET":
-        return render(request, "cadastro.html")
-    else:
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-
-        user = User.objects.filter(username=username).first()
-        if user:
-            return HttpResponse("Username already exists.", status=400)
-
-        user = User.objects.create_user(
-            username=username, email=email, password=password
-        )
-        user.save()
-
-        return HttpResponse(f"Username: {username}, Email: {email}")
-
 
 @login_required(login_url="/v1/login/")
 def app(request):
@@ -369,6 +348,7 @@ def confirmarReativacao(request, id_associado):
 
 @login_required(login_url="/v1/login/")
 @permission_required('v1.view_associado', login_url="/v1/app/")
+@require_POST
 def reativarAssociado(request, id_associado):
     associado = Associado.objects.get(id_associado=id_associado)
     associado.estado = "Ativo"
@@ -388,6 +368,7 @@ def reativarAssociado(request, id_associado):
 
 @login_required(login_url="/v1/login/")
 @permission_required('v1.view_associado', login_url="/v1/app/")
+@require_POST
 def inativarAssociado(request, id_associado):
     associado = Associado.objects.get(id_associado=id_associado)
     associado.estado = "Inativo"
@@ -401,6 +382,7 @@ def inativarAssociado(request, id_associado):
 
 @login_required(login_url="/v1/login/")
 @permission_required('v1.view_associado', login_url="/v1/app/")
+@require_POST
 def excluirAssociado(request, id_associado):
     associado = Associado.objects.get(id_associado=id_associado)
     associado.delete()
@@ -536,18 +518,22 @@ def confirmarCadastro(request, id_associado):
         if request.POST.get("acao") == "cancelar":
             associado.delete()
             return redirect("associados")
-        return redirect("associados")
-
-    for i in range(Planos.objects.get(id_plano=associado.id_planos.id_plano).meses_antecipados):
-        Mensalidades.objects.create(
-            id_associado = associado,
-            data_pagamento = None,
-            vencimento = datetime.datetime.today(),
-            periodo_referencia = buiga_utils.calcular_periodo_referencia(associado.id_planos.regime_cobranca, i),
-            id_planos = associado.id_planos,
-            valor = associado.id_planos.valor,
-            estado_pagamento = "Pendente"
-        )
+        if request.POST.get("acao") == "confirmar":
+            if not Mensalidades.objects.filter(id_associado=associado).exists():
+                for i in range(associado.id_planos.meses_antecipados):
+                    Mensalidades.objects.create(
+                        id_associado=associado,
+                        data_pagamento=None,
+                        vencimento=datetime.datetime.today(),
+                        periodo_referencia=buiga_utils.calcular_periodo_referencia(
+                            associado.id_planos.regime_cobranca, i
+                        ),
+                        id_planos=associado.id_planos,
+                        valor=associado.id_planos.valor,
+                        estado_pagamento="Pendente",
+                    )
+            return redirect("associados")
+        return redirect("confirmar-cadastro", id_associado=id_associado)
 
     return render(request, "confirmar-cadastro.html", {
         "associado": associado,
@@ -730,6 +716,7 @@ def novoPlano(request):
 
 @login_required(login_url="/v1/login/")
 @permission_required('v1.view_planos', login_url="/v1/app/")
+@require_POST
 def togglePlano(request, id_plano):
     plano = get_object_or_404(Planos, id_plano=id_plano)
     plano.estado = not plano.estado
@@ -1242,6 +1229,7 @@ def confirmarExclusaoAluno(request, id_aluno):
 
 @login_required(login_url="/v1/login/")
 @permission_required('v1.view_projeto', login_url="/v1/app/")
+@require_POST
 def excluirAluno(request, id_aluno):
     Alunos.objects.get(id_aluno=id_aluno).delete()
     return redirect("alunos")
@@ -1531,6 +1519,7 @@ def novoUsuario(request):
         usuario.save()
         messages.success(request, "Usuário criado com sucesso.")
         return redirect("administracao")
+    return redirect("administracao")
 
 @login_required(login_url="/v1/login/")
 @user_passes_test(lambda u: u.is_staff, login_url="/v1/app/")

@@ -54,7 +54,7 @@
         <form method="post" action="{% url 'confirmar-aluno' aluno.id_aluno %}"> {% csrf_token %}
             <div class="actions" style="margin-top:24px;">
                 <button type="submit" name="acao" value="confirmar" class="btn btn-primary">Confirmar cadastro</button>
-                <a href="{% url 'excluir-aluno' id_aluno=aluno.id_aluno %}" class="btn btn-ghost">{% csrf_token %} Cancelar</a> 
+                <button type="submit" formaction="{% url 'excluir-aluno' id_aluno=aluno.id_aluno %}" formmethod="post" class="btn btn-ghost">Cancelar</button>
             </div>
         </form>
     </div>

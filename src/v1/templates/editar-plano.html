@@ -52,10 +52,11 @@
         <div class="actions">
             <input type="submit" class="btn btn-primary" value="Salvar plano" />
             <a href="{% url 'planos' %}" class="btn btn-ghost">Cancelar</a>
+            {% csrf_token %}
             {% if plano.estado == True %}
-            <a href="{% url 'toggle-plano' id_plano=plano.id_plano %}" class="btn btn-danger" style="margin-left: auto;">Inativar</a>
+            <button type="submit" formaction="{% url 'toggle-plano' id_plano=plano.id_plano %}" formmethod="post" class="btn btn-danger" style="margin-left:auto;">Inativar</button>
             {% else %}
-            <a href="{% url 'toggle-plano' id_plano=plano.id_plano %}" class="btn btn-danger" style="margin-left: auto;">Reativar</a>
+            <button type="submit" formaction="{% url 'toggle-plano' id_plano=plano.id_plano %}" formmethod="post" class="btn btn-danger" style="margin-left:auto;">Reativar</button>
             {% endif %}
         </div>
     </form>
