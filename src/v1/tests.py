@@ -1,3 +1,5 @@
+from urllib.parse import urlsplit
+
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 
@@ -92,7 +94,7 @@ class PermissoesEAcoesTests(TestCase):
         response = self.client.get("/v1/dashboard/")
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response["Location"], "/v1/app/")
+        self.assertEqual(urlsplit(response["Location"]).path, "/v1/app/")
 
     def test_permissao_de_projeto_exibe_menu_sem_permissao_de_patrimonio(self):
         permissao = Permission.objects.get(

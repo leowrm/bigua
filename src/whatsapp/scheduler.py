@@ -29,11 +29,11 @@ class CobrancaScheduler:
 
         for mensalidade in mensalidades:
 
-            if not mensalidade.data_vencimento:
+            if not mensalidade.vencimento:
                 continue
 
             dias = (
-                mensalidade.data_vencimento - hoje
+                mensalidade.vencimento - hoje
             ).days
 
             if dias == config.dias_aviso_antes:
@@ -89,7 +89,7 @@ class CobrancaScheduler:
             )
             .replace(
                 "{{data_vencimento}}",
-                mensalidade.data_vencimento.strftime(
+                mensalidade.vencimento.strftime(
                     "%d/%m/%Y"
                 )
             )
