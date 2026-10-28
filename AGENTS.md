@@ -11,10 +11,14 @@ ser adaptada para um produto white label.
 
 - Backend: Python 3.13 e Django 5.2.
 - Banco local: SQLite, arquivo `src/mydatabase`.
-- Banco de produção: PostgreSQL.
-- Frontend: templates Django, HTML, CSS e JavaScript.
+- Banco recomendado em produção: PostgreSQL.
+- SQLite pode ser usado em uma instalação pequena e com pouco acesso simultâneo,
+  mas não é a opção recomendada para os jobs de cobrança e WhatsApp.
+- Frontend: templates Django, HTML, CSS e pequenos scripts JavaScript inline.
+- Node.js, React e npm não fazem parte da execução atual.
 - WhatsApp: WhatsApp Cloud API da Meta.
 - Produção: Ubuntu 24.04, Gunicorn, Nginx e HTTPS via Let's Encrypt.
+- Jobs de cobrança e WhatsApp: cron externo; o scheduler interno fica desligado.
 
 ## Estrutura principal
 
@@ -31,7 +35,8 @@ ser adaptada para um produto white label.
 No PowerShell:
 
 ```powershell
-cd "C:\Users\wesle\Documents\Codex\2026-08-24\pr\outputs\Brisa-Bigua-release\src"
+cd "C:\Users\wesle\bigua\src"
+Copy-Item .env.example .env
 python -m pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver 127.0.0.1:8000 --no-color
@@ -87,6 +92,11 @@ sudo systemctl restart bigua
 sudo systemctl status bigua --no-pager
 ```
 
+Se a produção usar SQLite, não é necessário executar comandos do PostgreSQL.
+Mantenha um único worker do Gunicorn e faça backup do arquivo `src/mydatabase`.
+O SQLite é aceitável para uma instalação pequena, mas pode apresentar bloqueios
+quando o painel, o cron e o WhatsApp escreverem ao mesmo tempo.
+
 Após alterar arquivos estáticos:
 
 ```bash
@@ -130,6 +140,11 @@ Não adicionar pagamentos automáticos sem solicitação explícita. A chave Pix
 ONG é o CNPJ, mas o valor real deve ser mantido em configuração segura quando
 for usado em produção.
 
+O envio de cobranças possui os comandos `gerar_disparos_whatsapp` e
+`enviar_disparos_whatsapp`. O primeiro cria registros `AGENDADO`; o segundo
+envia pela Cloud API e atualiza para `ENVIADO` ou `FALHOU`. A rotina usa o campo
+`Mensalidades.vencimento`.
+
 ## Landing page
 
 - Paleta: laranja, preto e branco.
@@ -145,7 +160,9 @@ Executar no mínimo:
 
 ```powershell
 python manage.py check
-python manage.py migrate --check
+python manage.py makemigrations --check --dry-run
+python manage.py migrate
+python manage.py test --verbosity 2
 ```
 
 Quando houver alterações de templates:

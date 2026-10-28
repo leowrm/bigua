@@ -4,7 +4,8 @@ Esta versão é uma instalação dedicada da Biguá. Ela não é multi-tenant.
 
 ## Preparação
 
-1. Use Python 3.12 ou superior e PostgreSQL em produção.
+1. Use Python 3.12 ou superior. PostgreSQL é recomendado em produção; SQLite é
+   uma alternativa para uma instalação pequena e com baixo acesso simultâneo.
 2. Crie um ambiente virtual e instale `src/requirements.txt`.
 3. Configure as variáveis de `src/.env.example` no provedor de hospedagem.
 4. Gere uma `DJANGO_SECRET_KEY` nova e mantenha-a fora do repositório.
@@ -29,7 +30,7 @@ Na VPS, os comandos abaixo deixam o projeto em `/opt/bigua`:
 
 ```bash
 apt update && apt upgrade -y
-apt install -y python3 python3-venv python3-pip postgresql postgresql-contrib nginx certbot python3-certbot-nginx git
+apt install -y python3 python3-venv python3-pip nginx certbot python3-certbot-nginx git
 mv /opt/Brisa-Bigua-release /opt/bigua
 useradd --system --create-home --home-dir /opt/bigua --shell /usr/sbin/nologin bigua || true
 chown -R bigua:bigua /opt/bigua
@@ -39,7 +40,18 @@ sudo -u bigua .venv/bin/pip install --upgrade pip
 sudo -u bigua .venv/bin/pip install -r src/requirements.txt
 ```
 
-## 2. Criar o PostgreSQL
+## 2. Escolher o banco de produção
+
+### Opção recomendada: PostgreSQL
+
+Instale o PostgreSQL:
+
+```bash
+apt install -y postgresql postgresql-contrib
+```
+
+Crie o usuário e o banco. Escolha uma senha forte e substitua
+`SENHA_DO_BANCO`:
 
 Escolha uma senha forte e substitua `SENHA_DO_BANCO` no comando:
 
@@ -54,6 +66,21 @@ CREATE DATABASE bigua OWNER bigua;
 ```
 
 O PostgreSQL ficará acessível apenas localmente; não abra a porta 5432 no firewall.
+
+### Opção alternativa: SQLite
+
+Para uma ONG pequena, com cerca de 50 associados e pouco acesso simultâneo, é
+possível usar SQLite na VPS. Nesse caso:
+
+- não crie usuário ou banco PostgreSQL;
+- use um único worker do Gunicorn;
+- mantenha os jobs do WhatsApp no cron externo;
+- faça backup do arquivo `/opt/bigua/src/mydatabase`;
+- evite várias rotinas escrevendo no banco ao mesmo tempo;
+- migre para PostgreSQL se surgirem bloqueios, lentidão ou mais usuários.
+
+SQLite reduz a configuração, mas não oferece a mesma segurança operacional do
+PostgreSQL para escritas concorrentes e crescimento do sistema.
 
 ## 3. Configurar as variáveis
 
@@ -72,12 +99,17 @@ DJANGO_ALLOWED_HOSTS=SEU_DOMINIO,www.SEU_DOMINIO
 DJANGO_CSRF_TRUSTED_ORIGINS=https://SEU_DOMINIO,https://www.SEU_DOMINIO
 DJANGO_SECURE_SSL_REDIRECT=True
 DJANGO_HSTS_SECONDS=31536000
-DB_ENGINE=postgresql
-DB_NAME=bigua
-DB_USER=bigua
-DB_PASSWORD=SENHA_DO_BANCO
-DB_HOST=localhost
-DB_PORT=5432
+# PostgreSQL (recomendado):
+# DB_ENGINE=postgresql
+# DB_NAME=bigua
+# DB_USER=bigua
+# DB_PASSWORD=SENHA_DO_BANCO
+# DB_HOST=localhost
+# DB_PORT=5432
+
+# SQLite (alternativa):
+DB_ENGINE=sqlite3
+SQLITE_NAME=mydatabase
 ENABLE_BACKGROUND_SCHEDULER=False
 WHATSAPP_TOKEN=SEU_TOKEN
 WHATSAPP_PHONE_NUMBER_ID=SEU_ID
@@ -147,6 +179,15 @@ Para backup diário do PostgreSQL:
 ```bash
 chmod +x /opt/bigua/deploy/backup-postgres.sh
 cat /opt/bigua/deploy/bigua-backup-cron | crontab -u root -
+```
+
+Para backup do SQLite, faça uma cópia consistente do arquivo com a aplicação
+temporariamente parada:
+
+```bash
+systemctl stop bigua
+cp /opt/bigua/src/mydatabase /opt/bigua/backup-mydatabase-$(date +%F)
+systemctl start bigua
 ```
 
 ## Primeira publicação
